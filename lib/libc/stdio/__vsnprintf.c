@@ -130,6 +130,8 @@ static int bwrite(enum buf_t btype, char **buf, size_t *bufsz, size_t *buf_pos,
 	if (*buf_pos < *bufsz)
 		(*buf)[*buf_pos] = '\0';
 
+	// TODO: flush (?)
+
 	return (int)slen;
 }
 

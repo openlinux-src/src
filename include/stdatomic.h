@@ -167,6 +167,8 @@ typedef enum {
 
 #define ATOMIC_FLAG_INIT { 0 }
 
+#define kill_dependency(x) (x)
+
 #else
 #error "Atomic operations are only supported with GCC"
 #endif

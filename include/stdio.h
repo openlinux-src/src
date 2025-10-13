@@ -49,5 +49,8 @@ int snprintf(char *restrict, size_t, const char *restrict, ...);
 int vasprintf(char **restrict, const char *restrict, va_list);
 int vfprintf(FILE *restrict, const char *restrict, va_list);
 int vsnprintf(char *restrict, size_t, const char *restrict, va_list);
+int getc(FILE *);
+int fgetc(FILE *);
+int getchar(void);
 
 #endif

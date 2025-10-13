@@ -2,6 +2,7 @@
 #include <stddef.h>
 #include <syscall.h>
 
+// TODO: need to find in path and call execl
 int execlp(const char *path, const char *argv0, ...)
 {
 	int argc;

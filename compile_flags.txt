@@ -2,3 +2,4 @@
 -Iinclude 
 -Ilib/libc/include
 -Ilib/libc/arch/x86_64
+-Ilib/libc/arch/x86_64/include
