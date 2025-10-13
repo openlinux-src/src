@@ -1,0 +1,7 @@
+[TODO]
+ - fix method of __vsnprintf shall fflush depends of type of file?
+ - add missing things in __vsnprintf
+ - create package manifest format
+ - add package manager
+ - add more coreutils
+ - integrate to toolchain more libc (libcrypt, ...)
