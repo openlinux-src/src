@@ -46,7 +46,7 @@ $(DEST)/%.h: $(CURDIR)/arch/$(ARCH)/bits/%.h
 install: $(BITS_DEST) $(CURDIR)/../../build/$(ARCH)/sysroot/lib/libc.a
 
 clean:
-	rm -rf ${OBJ} ${DEP} $(CURDIR)/arch/${ARCH}/include
+	rm -rf libc.a ${OBJ} ${DEP} $(CURDIR)/arch/${ARCH}/include
 
 .PHONY: kernel-headers install clean
 

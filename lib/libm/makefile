@@ -31,6 +31,6 @@ $(CURDIR)/../../build/$(ARCH)/sysroot/lib/libm.a: libm.a
 install: $(CURDIR)/../../build/$(ARCH)/sysroot/lib/libm.a
 
 clean:
-	rm -f $(OBJ) $(DEP)
+	rm -f libm.a $(OBJ) $(DEP)
 
-.PHONY: clean
+.PHONY: clean install

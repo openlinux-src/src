@@ -4,12 +4,17 @@ VENDOR := none
 
 LLVM_PREFIX := llvm-
 
+
 HOSTCC := clang
 HOSTLD := lld
 HOSTAR := ${LLVM_PREFIX}ar
 
 # Enabled libraries
-LIBS := libc libm
+LIBS := libc libm libjson
+
+
+CCACHE := $(shell command -v ccache 2>/dev/null)
+HOSTCC := $(CCACHE) $(HOSTCC)
 
 CFLAGS := -target ${ARCH}-linux-eabi
 ifeq (${ARCH},x86_64)

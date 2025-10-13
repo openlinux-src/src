@@ -28,23 +28,26 @@ extern FILE *const stdin;
 extern FILE *const stdout;
 extern FILE *const stderr;
 
-void clearerr(FILE *);
 char *ctermid(char *);
+void clearerr(FILE *);
 int fclose(FILE *);
-void setbuf(FILE *restrict, char *restrict);
 int ferror(FILE *);
 int fflush(FILE *);
-int puts(const char *);
-int fputs(const char *restrict, FILE *restrict);
-void perror(const char *);
 int fputc(int, FILE *);
-size_t fwrite(const void *restrict, size_t, size_t, FILE *restrict);
-int printf(const char *restrict, ...);
-int vfprintf(FILE *restrict, const char *restrict, va_list);
-int setvbuf(FILE *restrict, char *restrict, int, size_t);
-int putc(int, FILE *);
-int putchar(int);
+int fputs(const char *restrict, FILE *restrict);
 size_t fread(void *restrict, size_t, size_t, FILE *restrict);
 int fseek(FILE *, long, int);
+size_t fwrite(const void *restrict, size_t, size_t, FILE *restrict);
+void perror(const char *);
+int printf(const char *restrict, ...);
+int putc(int, FILE *);
+int putchar(int);
+int puts(const char *);
+void setbuf(FILE *restrict, char *restrict);
+int setvbuf(FILE *restrict, char *restrict, int, size_t);
+int snprintf(char *restrict, size_t, const char *restrict, ...);
+int vasprintf(char **restrict, const char *restrict, va_list);
+int vfprintf(FILE *restrict, const char *restrict, va_list);
+int vsnprintf(char *restrict, size_t, const char *restrict, va_list);
 
 #endif
