@@ -128,4 +128,6 @@
 #define _XOPEN_NAME_MAX 255
 #define _XOPEN_PATH_MAX 1024
 
+#define MB_LEN_MAX 4
+
 #endif

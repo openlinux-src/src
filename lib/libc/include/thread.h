@@ -1,9 +1,9 @@
 #ifndef __LIBC_THREAD_H
 #define __LIBC_THREAD_H
 
-struct thread {
+struct __thread_self {
 	int tid;
-	int errno;
+	int _errno;
 };
 
 #endif

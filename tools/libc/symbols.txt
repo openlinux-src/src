@@ -18,6 +18,7 @@ acosl
 add_adjusted
 add_and_denormalize
 alarm
+any_on
 asin
 asinf
 asinh
@@ -66,9 +67,14 @@ atomic_store
 atomic_store_explicit
 atomic_thread_fence
 B
+b2d
+Balloc
 be16toh
 be32toh
 be64toh
+Bfree
+bigcomp
+bigtens
 bind
 blkcnt_t
 blksize_t
@@ -116,10 +122,17 @@ coshf
 coshl
 cosl
 creat
+d2b
 dev_t
+diff
 double_t
+dprintf
 drem
 dremf
+dtoa
+dtoa_divmax
+dtoa_lock
+dtoa_r
 dup
 dup2
 dup3
@@ -183,6 +196,7 @@ ffsl
 ffsll
 fgetc
 FILE
+fileno
 finite
 finitef
 float_t
@@ -208,6 +222,7 @@ fputc
 fputs
 fread
 free
+freedtoa
 frexp
 frexpf
 frexpl
@@ -230,6 +245,7 @@ getentropy
 geteuid
 getgid
 getgroups
+gethex
 gethostid
 gethostname
 getlogin
@@ -247,6 +263,9 @@ getsockopt
 getuid
 gid_t
 global_size_class
+hexdig
+hexnan
+hi0bits
 htobe16
 htobe32
 htobe64
@@ -269,6 +288,7 @@ imaxdiv_t
 in_addr
 in_addr_t
 in_port_t
+increment
 inet_addr
 inet_ntoa
 inet_pton
@@ -326,6 +346,7 @@ isunordered
 isupper
 isupper_l
 isxdigit
+itoa
 j0
 j0f
 j1
@@ -347,6 +368,7 @@ lgammaf
 lgammaf_r
 lgammal
 lgammal_r
+Lhint
 libc
 linger
 link
@@ -358,6 +380,7 @@ llrintl
 llround
 llroundf
 llroundl
+lo0bits
 lockf
 log
 LOG_MASK
@@ -384,7 +407,9 @@ lround
 lroundf
 lroundl
 lseek
+lshift
 malloc
+maxthreads
 memccpy
 memchr
 memcmp
@@ -407,6 +432,8 @@ msglen_t
 msgqnum_t
 msqid_ds
 msync
+mult
+multadd
 munlock
 munlockall
 munmap
@@ -427,6 +454,7 @@ nfds_t
 nice
 nlink_t
 normalize
+nrv_alloc
 ntohl
 ntohs
 off_t
@@ -436,10 +464,13 @@ P
 page_list
 pause
 perror
+pfive
+pfivebits
 pid_t
 PIo2
 pipe
 pipe2
+pmem_next
 poll
 pollfd
 posix_close
@@ -450,6 +481,8 @@ pow
 pow10
 pow10f
 pow10l
+pow5mult
+pow5mult.p05
 powf
 powil
 powl
@@ -464,6 +497,7 @@ pr8
 pR8
 pread
 printf
+private_mem
 ps2
 pS2
 ps3
@@ -473,6 +507,7 @@ pS5
 ps8
 pS8
 pselect
+pten
 putc
 putc_unlocked
 putchar
@@ -496,7 +531,9 @@ qs5
 qS5
 qs8
 qS8
+quorem
 R
+ratio
 read
 readlink
 readlinkat
@@ -522,6 +559,8 @@ rmdir
 round
 roundf
 roundl
+rshift
+rv_alloc
 S
 S_ISBLK
 S_ISCHR
@@ -534,6 +573,7 @@ S_TYPEISMQ
 S_TYPEISSEM
 S_TYPEISSHM
 S_TYPEISTMO
+s2b
 sa_family_t
 scalb
 scalbf
@@ -552,6 +592,7 @@ semid_ds
 semop
 send
 sendto
+set_max_dtoa_threads
 setbuf
 setegid
 seteuid
@@ -674,17 +715,22 @@ tcgetwinsize
 tcsendbreak
 tcsetattr
 tcsetwinsize
+tens
 termios
 tgamma
 tgammaf
 tgammal
 thrd_t
+TI0
+TI0_used
+TI1
 time
 time_t
 timer_t
 times
 timespec
 timeval
+tinytens
 tm
 tms
 tolower

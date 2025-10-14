@@ -1,26 +1,18 @@
 #include <io.h>
+#include <stdarg.h>
+#include <stdio.h>
 
+// TODO: maybe use memstream in future??
 int vasprintf(char **restrict ptr, const char *restrict format, va_list ap)
 {
-	size_t bufsz = 0;
-	va_list ap_copy;
+	int l;
+	va_list ap2;
+	va_copy(ap2, ap);
+	l = vsnprintf(0, 0, format, ap2);
+	va_end(ap2);
 
-	if (!ptr || !format)
+	if (l < 0 || !(*ptr = malloc(l + 1U)))
 		return -1;
 
-	*ptr = NULL;
-
-	va_copy(ap_copy, ap);
-
-	int ret = __vsnprintf(ptr, bufsz, format, ap_copy);
-
-	va_end(ap_copy);
-
-	if (ret < 0) {
-		free(*ptr);
-		*ptr = NULL;
-		return -1;
-	}
-
-	return ret;
+	return vsnprintf(*ptr, l + 1U, format, ap);
 }

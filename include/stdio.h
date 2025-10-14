@@ -48,6 +48,8 @@ void setbuf(FILE *restrict, char *restrict);
 int setvbuf(FILE *restrict, char *restrict, int, size_t);
 int snprintf(char *restrict, size_t, const char *restrict, ...);
 int vasprintf(char **restrict, const char *restrict, va_list);
+int dprintf(int, const char *restrict, ...);
+int vdprintf(int, const char *restrict, va_list);
 int vfprintf(FILE *restrict, const char *restrict, va_list);
 int vsnprintf(char *restrict, size_t, const char *restrict, va_list);
 int getc(FILE *);

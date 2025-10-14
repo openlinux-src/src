@@ -3,9 +3,10 @@
 
 int asprintf(char **restrict ptr, const char *restrict format, ...)
 {
+	int r;
 	va_list ap;
 	va_start(ap, format);
-	int ret = vasprintf(ptr, format, ap);
+	r = vasprintf(ptr, format, ap);
 	va_end(ap);
-	return ret;
+	return r;
 }

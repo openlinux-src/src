@@ -4,7 +4,6 @@
 #include <stdlib.h>
 #include <sys/time.h>
 #include <thread.h>
-#include <time.h>
 #include <unistd.h>
 
 #define weak_reference(old, new) \
@@ -13,7 +12,7 @@
 extern int main(int, char *[]);
 char **environ;
 
-static struct thread thread = { .tid = 0, .errno = 0 };
+static struct __thread_self thread = { .tid = 0, ._errno = 0 };
 
 struct __attribute__((packed)) auxv_t {
 	uintptr_t a_type;

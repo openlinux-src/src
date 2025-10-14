@@ -3,9 +3,10 @@
 
 int printf(const char *restrict format, ...)
 {
-	va_list args;
-	va_start(args, format);
-	int ret = vfprintf(stdout, format, args);
-	va_end(args);
-	return ret;
+	int r;
+	va_list ap;
+	va_start(ap, format);
+	r = vfprintf(stdout, format, ap);
+	va_end(ap);
+	return r;
 }
