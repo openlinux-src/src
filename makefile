@@ -24,8 +24,4 @@ clean:
 	$(MAKE) -C bin clean
 	rm -rf build
 
-docker:
-	docker buildx build --platform=linux/amd64 -t openlinux:latest --load .
-	docker run --rm -it openlinux:latest /bin/sh
-
 .PHONY: all build clean
