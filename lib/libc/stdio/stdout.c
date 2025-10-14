@@ -6,7 +6,7 @@
 #define BUFSIZ 4096
 
 static atomic_flag __stdio_lock = ATOMIC_FLAG_INIT;
-static char __stdout_buffer[BUFSIZ];
+char __stdout_buffer[BUFSIZ];
 struct __FILE __stdout = { .fd = STDOUT_FILENO,
 			   .flags = O_WRONLY,
 			   .buf = __stdout_buffer,

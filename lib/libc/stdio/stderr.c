@@ -5,7 +5,7 @@
 #define BUFSIZ 4096
 #define _IOLBF 0x1
 
-static char __stderr_buffer[BUFSIZ];
+char __stderr_buffer[BUFSIZ];
 struct __FILE __stderr = { .fd = STDOUT_FILENO,
 			   .flags = O_WRONLY,
 			   .buf = __stderr_buffer,

@@ -5,7 +5,7 @@
 #define BUFSIZ 4096
 #define _IOLBF 0x1
 
-static char __stdin_buffer[BUFSIZ];
+char __stdin_buffer[BUFSIZ];
 struct __FILE __stdin = { .fd = STDOUT_FILENO,
 			  .flags = O_RDONLY,
 			  .buf = __stdin_buffer,
