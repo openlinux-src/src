@@ -3,6 +3,6 @@
 
 int sockatmark(int s)
 {
-	int arg;
+	int arg = 0;
 	return syscall(ioctl, s, SIOCATMARK, &arg) < 0 ? -1 : arg;
 }

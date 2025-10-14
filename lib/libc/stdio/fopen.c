@@ -8,16 +8,17 @@
 
 FILE *fopen(const char *restrict pathname, const char *restrict mode)
 {
-	int fd, flags;
+	int fd, flags, _mode;
 	FILE *fp;
 
-	flags = 0;
+	_mode = 0;
 	if (mode[0] == 'r') {
 		flags = O_RDONLY;
 	} else if (mode[0] == 'w') {
 		flags = O_WRONLY | O_CREAT | O_TRUNC;
 	} else if (mode[0] == 'a') {
 		flags = O_WRONLY | O_CREAT | O_APPEND;
+		_mode = 0666;
 	} else {
 		errno = EINVAL;
 		return NULL;
@@ -27,7 +28,7 @@ FILE *fopen(const char *restrict pathname, const char *restrict mode)
 		flags = (flags & ~(O_RDONLY | O_WRONLY)) | O_RDWR;
 	}
 
-	if ((fd = open(pathname, flags)) < 0)
+	if ((fd = open(pathname, flags, _mode)) < 0)
 		return NULL;
 
 	if ((fp = calloc(1, sizeof(FILE))) == NULL)

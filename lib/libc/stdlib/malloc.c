@@ -153,6 +153,11 @@ void *malloc(size_t size)
 	}
 
 	page_list = new_page;
+
+	// Mark the first block as used and return it
+	new_page->bitmap[0] |= 1;
+	new_page->block.used = 1;
+
 	LIBC_UNLOCK(libc.lock.malloc);
 
 	return new_page->heap;

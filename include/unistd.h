@@ -45,7 +45,7 @@ _Noreturn void _exit(int);
 int execl(const char *, const char *, ...);
 // int execle(const char *, const char *, ...);
 int execlp(const char *, const char *, ...);
-// int execv(const char *, char *const[]);
+int execv(const char *, char *const[]);
 int execve(const char *, char *const[], char *const[]);
 int execvp(const char *, char *const[]);
 

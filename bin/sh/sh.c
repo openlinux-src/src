@@ -1,3 +1,4 @@
+#include <errno.h>
 #include <unistd.h>
 #include <string.h>
 #include <stdlib.h>
@@ -200,11 +201,6 @@ ssize_t uputc(char c)
 	if ((flags & FLAG_PIPE) == 0)
 		return tputc(c);
 	return 0;
-}
-
-// buffer putc
-void bputc(char *buf, char c)
-{
 }
 
 ssize_t readline(char *prompt, char *buf, size_t bufsz)
@@ -595,6 +591,8 @@ int loop(int flags)
 		if (n == -1)
 			return 1;
 
+		buf[offset + n] = '\0';
+
 		while (n > 0 && (buf[offset + n - 1] == ' ' ||
 				 buf[offset + n - 1] == '\t'))
 			n--;
@@ -653,6 +651,10 @@ int loop(int flags)
 		}
 
 		struct token tokens[512];
+
+		for (int i = 0; i < 512; i++)
+			tokens[i].ptr = NULL;
+
 		int ntok = tokenize(buf, tokens, 512);
 
 		struct parser parser;
@@ -660,13 +662,16 @@ int loop(int flags)
 		parser.pos = 0;
 
 		struct ast *tree = parse_expr(&parser);
-		// ast_print(tree, 0);
 		ast_exec(tree);
 		ast_free(tree);
 
+		for (int i = 0; i < ntok; i++)
+			if (tokens[i].ptr)
+				free((void *)tokens[i].ptr);
+
 		PS = PS1;
 		offset = 0;
-		buf[0] = '\0';
+		memset(buf, 0, sizeof(buf));
 	}
 
 	return 0;
@@ -801,7 +806,12 @@ int ast_exec(struct ast *node)
 		pid_t pid = fork();
 		if (pid == 0) {
 			execvp(node->argv[0], node->argv);
-			perror("exec");
+			if (errno == ENOENT) {
+				printf("sh: command not found: %s\n",
+				       node->argv[0]);
+			} else {
+				perror("execvp");
+			}
 			exit(1);
 		} else if (pid > 0) {
 			int status;

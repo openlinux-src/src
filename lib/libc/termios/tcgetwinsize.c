@@ -12,7 +12,7 @@ struct __winsize {
 int tcgetwinsize(int fildes, struct winsize *winsize_p)
 {
 	long ret;
-	struct __winsize winsize;
+	struct __winsize winsize = { 0 };
 
 	ret = syscall(ioctl, fildes, TIOCGWINSZ, &winsize);
 

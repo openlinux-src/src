@@ -9,6 +9,7 @@
 #include <stddef.h>
 #include <limits.h>
 #include <math.h>
+#include <unistd.h>
 
 extern char *dtoa(double, int mode, int ndigits, int *decpt, int *sign,
 		  char **rve);
@@ -46,8 +47,9 @@ int vfprintf(FILE *restrict stream, const char *restrict format, va_list ap)
 		if (*ptr != '%') {
 			fputc(*ptr, stream);
 		} else {
-			char *s;
-			int l;
+			char *s = NULL;
+			char buf[128];
+			int l = 0;
 			int width = 0;
 			int padding = 0;
 			int precision = -1;
@@ -150,9 +152,9 @@ int vfprintf(FILE *restrict stream, const char *restrict format, va_list ap)
 			switch (*(++ptr)) {
 			case 'i':
 			case 'd': {
-				char buf[21];
 				long long val;
 				int negative = 0;
+
 				switch (length) {
 				case LENGTH_NONE:
 					val = va_arg(ap, int);
@@ -199,13 +201,13 @@ int vfprintf(FILE *restrict stream, const char *restrict format, va_list ap)
 					s[0] = ' ';
 					s[++l] = '\0';
 				}
+
 				break;
 			}
 			case 'o':
 			case 'u':
 			case 'x':
 			case 'X': {
-				char buf[21];
 				unsigned long long val;
 
 				switch (length) {
@@ -298,9 +300,9 @@ int vfprintf(FILE *restrict stream, const char *restrict format, va_list ap)
 
 				int decpt, sign;
 				char *rve;
-				char *buf = dtoa(val, mode, ndigits, &decpt,
-						 &sign, &rve);
-				int mant_len = rve - buf;
+				char *buf_r = dtoa(val, mode, ndigits, &decpt,
+						   &sign, &rve);
+				int mant_len = rve - buf_r;
 				char tmp[mant_len + 1];
 				char *s = tmp;
 				int pos = 0;
@@ -313,10 +315,10 @@ int vfprintf(FILE *restrict stream, const char *restrict format, va_list ap)
 					tmp[pos++] = ' ';
 
 				for (int i = 0; i < mant_len; i++)
-					tmp[pos++] = buf[i];
+					tmp[pos++] = buf_r[i];
 
 				tmp[pos] = '\0';
-				free(buf);
+				free(buf_r);
 				l = strlen(s);
 
 				break;
@@ -361,7 +363,6 @@ int vfprintf(FILE *restrict stream, const char *restrict format, va_list ap)
 					(unsigned long long)(mant *
 							     (1ULL << 53));
 
-				char buf[64];
 				int pos = 0;
 				if (val < 0)
 					buf[pos++] = '-';
@@ -390,7 +391,6 @@ int vfprintf(FILE *restrict stream, const char *restrict format, va_list ap)
 				length = LENGTH_L;
 				/* fallthrough */
 			case 'c': {
-				char buf[MB_LEN_MAX];
 				if (length == LENGTH_L) {
 					// wint_t wc = va_arg(ap, wint_t);
 					// int n = wcrtomb(buf, wc, NULL);
@@ -426,15 +426,17 @@ int vfprintf(FILE *restrict stream, const char *restrict format, va_list ap)
 			case 'p': {
 				void *ptr_val = va_arg(ap, void *);
 				uintptr_t uptr = (uintptr_t)ptr_val;
-				char buf[21];
-				l = itoa(uptr, buf, 16, sizeof(void *) * 2, 0);
-				memmove(buf + 2, buf, l);
+				int len = itoa((unsigned long long)uptr,
+					       buf + 2, 16, sizeof(void *) * 2,
+					       0);
 				buf[0] = '0';
 				buf[1] = 'x';
-				l += 2;
+				buf[len + 2] = '\0';
+				l = len + 2;
 				s = buf;
 				break;
 			}
+
 			case 'n': {
 				int *ip = va_arg(ap, int *);
 				if (ip != NULL) {
@@ -478,7 +480,8 @@ int vfprintf(FILE *restrict stream, const char *restrict format, va_list ap)
 			}
 
 			if (l > 0) {
-				fwrite(s, 1, l, stream);
+				if (s != NULL)
+					fwrite(s, 1, l, stream);
 				total_printed += l;
 			}
 
@@ -489,6 +492,7 @@ int vfprintf(FILE *restrict stream, const char *restrict format, va_list ap)
 				}
 			}
 		}
+		ptr++;
 	}
 
 	return total_printed;

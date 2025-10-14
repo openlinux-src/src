@@ -1,6 +1,6 @@
 #include <stdarg.h>
 #include <stddef.h>
-#include <syscall.h>
+#include <unistd.h>
 
 int execl(const char *path, const char *argv0, ...)
 {
@@ -22,5 +22,5 @@ int execl(const char *path, const char *argv0, ...)
 	argv[argc] = NULL;
 	va_end(ap);
 
-	return syscall(execve, path, argv, 0);
+	return execvp(path, argv);
 }

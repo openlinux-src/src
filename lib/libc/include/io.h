@@ -13,6 +13,25 @@ typedef __SIZE_TYPE__ size_t;
 #define _IO_ERR 0x4
 #define _IO_EOF 0x8
 
+/* Buffering modes */
+#define _IOFBF 0 /* Full buffering */
+#define _IOLBF 1 /* Line buffering */
+#define _IONBF 2 /* No buffering */
+
+/* File access modes */
+#ifndef O_RDONLY
+#define O_RDONLY 0
+#define O_WRONLY 1
+#define O_RDWR 2
+#define O_ACCMODE 3
+#endif
+
+/* Atomic operations for threading */
+#define LIBC_LOCK(x)                             \
+	while (atomic_flag_test_and_set(&(x))) { \
+	}
+#define LIBC_UNLOCK(x) atomic_flag_clear(&(x))
+
 struct __FILE {
 	int fd;
 	uint32_t flags;

@@ -15,14 +15,7 @@ static void file_free(FILE *fp)
 	}
 
 	if (fp->buf) {
-		extern char __stdout_buffer[];
-		extern char __stderr_buffer[];
-		extern char __stdin_buffer[];
-
-		if (fp->buf != __stdout_buffer && fp->buf != __stderr_buffer &&
-		    fp->buf != __stdin_buffer) {
-			free(fp->buf);
-		}
+		free(fp->buf);
 	}
 
 	if (fp != stdout && fp != stderr && fp != stdin)

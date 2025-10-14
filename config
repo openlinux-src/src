@@ -15,7 +15,6 @@ HOSTAR := ${LLVM_PREFIX}ar
 # Enabled libraries
 LIBS := libc libm libjson
 
-
 CCACHE := $(shell command -v ccache 2>/dev/null)
 HOSTCC := $(CCACHE) $(HOSTCC)
 
@@ -27,9 +26,11 @@ CFLAGS += -march=armv7-m
 else
 CFLAGS += -march=arm
 endif
+# CFLAGS += -Wall -Wextra
 CFLAGS += -mtune=generic -Wno-macro-redefined
 CFLAGS += -nostdlib -nostdinc -nodefaultlibs
 CFLAGS += -Os -ffunction-sections -fdata-sections -flto
+
 TASK := printf '  \033[34m%+8s\033[m %s\n'
 MAKEFLAGS := -j8 -s --no-print-directory
 

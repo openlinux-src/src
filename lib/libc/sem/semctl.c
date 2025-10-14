@@ -1,4 +1,5 @@
 #include <stdarg.h>
+#include <stddef.h>
 #include <sys/ipc.h>
 #include <sys/sem.h>
 #include <syscall.h>
@@ -6,7 +7,7 @@
 int semctl(int semid, int semnum, int cmd, ...)
 {
 	va_list ap;
-	struct semid_ds *buf;
+	struct semid_ds *buf = NULL;
 
 	switch (cmd) {
 	case SETVAL:

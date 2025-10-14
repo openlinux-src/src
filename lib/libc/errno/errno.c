@@ -1,7 +1,9 @@
-#include <features.h>
+#include <thread.h>
+#include <threads.h>
+
+static int __thread_errno = 0;
 
 int *__errno_location(void)
 {
-	static int errno = 0;
-	return &errno;
+	return &__thread_errno;
 }
