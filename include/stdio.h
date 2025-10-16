@@ -30,11 +30,13 @@ extern FILE *const stderr;
 
 // TODO: sort it
 char *ctermid(char *);
+char *fgets(char *restrict, int, FILE *restrict);
 void clearerr(FILE *);
 int fclose(FILE *);
 int ferror(FILE *);
 int fflush(FILE *);
 int fputc(int, FILE *);
+FILE *fopen(const char *restrict, const char *restrict);
 int fputs(const char *restrict, FILE *restrict);
 size_t fread(void *restrict, size_t, size_t, FILE *restrict);
 int fseek(FILE *, long, int);
@@ -50,6 +52,7 @@ int snprintf(char *restrict, size_t, const char *restrict, ...);
 int vasprintf(char **restrict, const char *restrict, va_list);
 int dprintf(int, const char *restrict, ...);
 int vdprintf(int, const char *restrict, va_list);
+int fprintf(FILE *restrict, const char *restrict, ...);
 int vfprintf(FILE *restrict, const char *restrict, va_list);
 int vsnprintf(char *restrict, size_t, const char *restrict, va_list);
 int getc(FILE *);

@@ -7,14 +7,13 @@
 #include <stdlib.h>
 #include <string.h>
 #include <stddef.h>
-#include <limits.h>
 #include <math.h>
 #include <unistd.h>
 
 extern char *dtoa(double, int mode, int ndigits, int *decpt, int *sign,
 		  char **rve);
 
-int itoa(unsigned long long v, char *s, int b, int p, int u)
+static int utoa_base(unsigned long long v, char *s, int b, int p, int u)
 {
 	const char *d = u ? "0123456789ABCDEF" : "0123456789abcdef";
 	char buf[65];
@@ -46,6 +45,8 @@ int vfprintf(FILE *restrict stream, const char *restrict format, va_list ap)
 	while (*ptr != '\0') {
 		if (*ptr != '%') {
 			fputc(*ptr, stream);
+			total_printed++;
+			ptr++;
 		} else {
 			char *s = NULL;
 			char buf[128];
@@ -53,6 +54,9 @@ int vfprintf(FILE *restrict stream, const char *restrict format, va_list ap)
 			int width = 0;
 			int padding = 0;
 			int precision = -1;
+
+			// Skip the '%'
+			ptr++;
 
 			enum {
 				FLAG_NONE = 0,
@@ -115,7 +119,8 @@ int vfprintf(FILE *restrict stream, const char *restrict format, va_list ap)
 					precision = 0;
 					while (isdigit(*ptr)) {
 						precision = precision * 10 +
-							    (*ptr++ - '0');
+							    (*ptr - '0');
+						ptr++;
 					}
 				}
 			}
@@ -127,6 +132,7 @@ int vfprintf(FILE *restrict stream, const char *restrict format, va_list ap)
 					ptr++;
 				} else
 					length = LENGTH_H;
+				ptr++;
 				break;
 			case 'l':
 				if (*(ptr + 1) == 'l') {
@@ -134,22 +140,27 @@ int vfprintf(FILE *restrict stream, const char *restrict format, va_list ap)
 					ptr++;
 				} else
 					length = LENGTH_L;
+				ptr++;
 				break;
 			case 'L':
 				length = LENGTH_CAPL;
+				ptr++;
 				break;
 			case 'j':
 				length = LENGTH_J;
+				ptr++;
 				break;
 			case 'z':
 				length = LENGTH_Z;
+				ptr++;
 				break;
 			case 't':
 				length = LENGTH_T;
+				ptr++;
 				break;
 			}
 
-			switch (*(++ptr)) {
+			switch (*ptr) {
 			case 'i':
 			case 'd': {
 				long long val;
@@ -185,7 +196,7 @@ int vfprintf(FILE *restrict stream, const char *restrict format, va_list ap)
 					return -1;
 				}
 
-				l = itoa(val, buf, 10, precision, 0);
+				l = utoa_base(val, buf, 10, precision, 0);
 
 				s = buf;
 				if (val < 0) {
@@ -244,7 +255,7 @@ int vfprintf(FILE *restrict stream, const char *restrict format, va_list ap)
 					   (*ptr == 'u') ? 10 :
 							   16;
 				int upper = (*ptr == 'X');
-				l = itoa(val, buf, base, precision, upper);
+				l = utoa_base(val, buf, base, precision, upper);
 				s = buf;
 
 				if ((flags & FLAG_HASH) && val != 0) {
@@ -374,12 +385,12 @@ int vfprintf(FILE *restrict stream, const char *restrict format, va_list ap)
 				buf[pos++] = '0';
 				buf[pos++] = upper ? 'X' : 'x';
 
-				pos += itoa(hm, buf + pos, 16,
-					    precision > 0 ? precision : 0,
-					    upper);
+				pos += utoa_base(hm, buf + pos, 16,
+						 precision > 0 ? precision : 0,
+						 upper);
 
 				buf[pos++] = upper ? 'P' : 'p';
-				pos += itoa(exp - 53, buf + pos, 10, 0, 0);
+				pos += utoa_base(exp - 53, buf + pos, 10, 0, 0);
 
 				buf[pos] = '\0';
 				s = buf;
@@ -426,9 +437,9 @@ int vfprintf(FILE *restrict stream, const char *restrict format, va_list ap)
 			case 'p': {
 				void *ptr_val = va_arg(ap, void *);
 				uintptr_t uptr = (uintptr_t)ptr_val;
-				int len = itoa((unsigned long long)uptr,
-					       buf + 2, 16, sizeof(void *) * 2,
-					       0);
+				int len = utoa_base((unsigned long long)uptr,
+						    buf + 2, 16,
+						    sizeof(void *) * 2, 0);
 				buf[0] = '0';
 				buf[1] = 'x';
 				buf[len + 2] = '\0';
@@ -456,6 +467,8 @@ int vfprintf(FILE *restrict stream, const char *restrict format, va_list ap)
 				return -1;
 			}
 
+			ptr++;
+
 			if (l < width) {
 				padding = width - l;
 			}
@@ -468,7 +481,7 @@ int vfprintf(FILE *restrict stream, const char *restrict format, va_list ap)
 				pad_char = '0';
 			}
 
-			if (!(flags & FLAG_MINUS)) {
+			if ((flags & FLAG_MINUS) == 0) {
 				for (int i = 0; i < padding; i++) {
 					if (pad_char == '0') {
 						fwrite("0", 1, 1, stream);
@@ -492,7 +505,6 @@ int vfprintf(FILE *restrict stream, const char *restrict format, va_list ap)
 				}
 			}
 		}
-		ptr++;
 	}
 
 	return total_printed;

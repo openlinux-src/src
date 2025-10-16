@@ -17,7 +17,7 @@ int execvp(const char *file, char *const argv[])
 		return execv(file, argv);
 	} else {
 		char *ptr;
-		char *path = NULL; // becouse we dont have getenv
+		char *path = NULL; // TODO: getenv
 
 		if (path == NULL || *path == '\0') {
 			path = "/bin";

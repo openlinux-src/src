@@ -6,7 +6,7 @@ ROOTFS_TAR := openlinux-$(VERSION)-$(ARCH)-rootfs.tar.gz
 
 all: __all
 	$(TASK) TAR ${ROOTFS_TAR}
-	gtar -czf build/$(ARCH)/${ROOTFS_TAR} -C build/$(ARCH)/sysroot .
+	gtar --owner=0 --group=0 --numeric-owner -czf build/$(ARCH)/${ROOTFS_TAR} -C build/$(ARCH)/sysroot .
 	ARCH=${ARCH} sh tools/package.sh
 
 __all: | build

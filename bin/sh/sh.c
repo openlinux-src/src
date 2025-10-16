@@ -9,6 +9,8 @@
 #include <stdlib.h>
 #include <sys/wait.h>
 
+#define MAX_BUILTINS 16
+
 enum {
 	FLAG_NONE = 0,
 	FLAG_PIPE = 1 << 0,
@@ -90,6 +92,21 @@ struct parser {
 struct ast *parse_expr(struct parser *p);
 void ast_print(struct ast *node, int indent);
 int ast_exec(struct ast *node);
+
+void tty_setup()
+{
+	struct termios raw = termios;
+	raw.c_lflag &= ~(ICANON | ECHO | ISIG | IEXTEN);
+	raw.c_iflag &= ~(IXON | ICRNL);
+	raw.c_cc[VMIN] = 1;
+	raw.c_cc[VTIME] = 0;
+	tcsetattr(STDIN_FILENO, TCSANOW, &raw);
+}
+
+void tty_restore()
+{
+	tcsetattr(STDIN_FILENO, TCSANOW, &termios);
+}
 
 struct ast *ast_new_command(char **argv, int argc)
 {
@@ -252,7 +269,6 @@ ssize_t readline(char *prompt, char *buf, size_t bufsz)
 				uputs("\b \b");
 				cursor--;
 				len--;
-				// Shift characters after the cursor to the left
 				for (int i = cursor; i < len; i++) {
 					buf[i - 1] = buf[i];
 				}
@@ -487,7 +503,6 @@ int tokenize(const char *input, struct token *tokens, int max_tokens)
 			}
 		}
 
-		// redirekcje
 		if (is_redir_char(input[pos])) {
 			if (pos + 1 < (int)len && input[pos] == '<' &&
 			    input[pos + 1] == '<') {
@@ -662,7 +677,9 @@ int loop(int flags)
 		parser.pos = 0;
 
 		struct ast *tree = parse_expr(&parser);
+		tty_restore();
 		ast_exec(tree);
+		tty_setup();
 		ast_free(tree);
 
 		for (int i = 0; i < ntok; i++)
@@ -707,7 +724,7 @@ struct ast *parse_expr(struct parser *p);
 struct ast *parse_block(struct parser *p)
 {
 	int subshell = cur(p)->type == TOKEN_LPAREN;
-	next(p); // pomiń ( lub {
+	next(p);
 
 	struct ast *child = parse_expr(p);
 
@@ -719,7 +736,7 @@ struct ast *parse_block(struct parser *p)
 		printf("Syntax error: expected }\n");
 		exit(1);
 	}
-	next(p); // zamykający ) lub }
+	next(p);
 	return ast_new_block(child, subshell);
 }
 
@@ -727,7 +744,7 @@ struct ast *parse_primary(struct parser *p)
 {
 	if (cur(p)->type == TOKEN_LBRACE || cur(p)->type == TOKEN_LPAREN) {
 		int subshell = cur(p)->type == TOKEN_LPAREN;
-		next(p); // pomiń ( lub {
+		next(p);
 
 		struct ast *child = parse_expr(p);
 
@@ -747,7 +764,7 @@ struct ast *parse_primary(struct parser *p)
 			printf("Syntax error: expected }\n");
 			exit(1);
 		}
-		next(p); // zamykający ) lub }
+		next(p);
 		return ast_new_block(child, subshell);
 	} else {
 		struct ast *cmd = parse_command(p);
@@ -796,12 +813,6 @@ int ast_exec(struct ast *node)
 	case AST_COMMAND:
 		if (node->argc == 0)
 			return 0;
-
-		if (strcmp(node->argv[0], "cd") == 0) {
-			if (node->argc > 1)
-				chdir(node->argv[1]);
-			return 0;
-		}
 
 		pid_t pid = fork();
 		if (pid == 0) {
@@ -927,6 +938,15 @@ void ast_print(struct ast *node, int indent)
 	ast_print(node->right, indent + 1);
 }
 
+int builtin_exit(int argc, char **argv)
+{
+	int status = 0;
+	if (argc > 1)
+		status = strtol(argv[1], NULL, 10);
+	tty_restore();
+	exit(status);
+}
+
 int main(int argc, char **argv)
 {
 	flags = FLAG_NONE;
@@ -976,15 +996,10 @@ int main(int argc, char **argv)
 
 	if ((flags & FLAG_PIPE) == 0) {
 		tcgetattr(STDIN_FILENO, &termios);
-		struct termios raw = termios;
-		raw.c_lflag &= ~(ICANON | ECHO | ISIG | IEXTEN);
-		raw.c_iflag &= ~(IXON | ICRNL);
-		raw.c_cc[VMIN] = 1;
-		raw.c_cc[VTIME] = 0;
-		tcsetattr(STDIN_FILENO, TCSANOW, &raw);
+		tty_setup();
 	}
 
 	loop(flags);
-	tcsetattr(STDIN_FILENO, TCSANOW, &termios);
+	tty_restore();
 	return 0;
 }

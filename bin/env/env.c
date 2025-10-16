@@ -4,11 +4,12 @@
 int main(int argc, char **argv)
 {
 	extern char **environ;
-	char **p;
+	char **ptr;
 
-	p = environ;
-	while (*p) {
-		write(STDOUT_FILENO, *p, strlen(*p));
+	ptr = environ;
+	while (*ptr) {
+		write(STDOUT_FILENO, *ptr, strlen(*ptr));
 		write(STDOUT_FILENO, "\n", 1);
+		ptr++;
 	}
 }

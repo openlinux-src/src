@@ -28,15 +28,19 @@ void *realloc(void *, size_t);
 void *calloc(size_t, size_t);
 
 long strtol(const char *restrict, char **restrict, int);
-long long strtoll(const char *restrict nptr, char **restrict endptr, int base);
-unsigned long strtoul(const char *restrict nptr, char **restrict endptr,
-		      int base);
-unsigned long long strtoull(const char *restrict nptr, char **restrict endptr,
-			    int base);
-float strtof(const char *restrict nptr, char **restrict endptr);
-double strtod(const char *restrict nptr, char **restrict endptr);
-long double strtold(const char *restrict nptr, char **restrict endptr);
-
+long long strtoll(const char *restrict, char **restrict, int);
+unsigned long strtoul(const char *restrict, char **restrict, int);
+unsigned long long strtoull(const char *restrict, char **restrict, int);
+float strtof(const char *restrict, char **restrict);
+double strtod(const char *restrict, char **restrict);
+int atoi(const char *);
+double atof(const char *);
+long atol(const char *);
+long long atoll(const char *);
+long double strtold(const char *restrict, char **restrict);
+void qsort(void *, size_t, size_t, int (*)(const void *, const void *));
+void qsort_r(void *, size_t, size_t,
+	     int (*)(const void *, const void *, void *), void *);
 void free(void *);
 
 #endif

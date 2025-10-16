@@ -1,6 +1,12 @@
 #ifndef __SIGNAL_H
 #define __SIGNAL_H
 
+#include <bits/signal.h>
+
+#define SIG_DFL ((void (*)(int))0)
+#define SIG_ERR ((void (*)(int)) - 1)
+#define SIG_IGN ((void (*)(int))1)
+
 #define SIG_BLOCK 0
 #define SIG_UNBLOCK 1
 #define SIG_SETMASK 2
@@ -50,6 +56,17 @@
 #define SIGSYS 31
 #define SIGUNUSED SIGSYS
 
+#define SA_NOCLDSTOP 0x00000001
+#define SA_NOCLDWAIT 0x00000002
+#define SA_SIGINFO 0x00000004
+#define SA_ONSTACK 0x08000000
+#define SA_RESTART 0x10000000
+#define SA_NODEFER 0x40000000
+#define SA_RESETHAND 0x80000000
+
+#define SS_ONSTACK 1
+#define SS_DISABLE 2
+
 typedef __INT64_TYPE__ pid_t;
 typedef __UINT32_TYPE__ uid_t;
 typedef __UINT64_TYPE__ sigset_t;
@@ -91,5 +108,7 @@ int sigaddset(sigset_t *, int);
 int sigprocmask(int, const sigset_t *restrict, sigset_t *restrict);
 int sigsuspend(const sigset_t *);
 int raise(int);
+
+void (*signal(int, void (*)(int)))(int);
 
 #endif

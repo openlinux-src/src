@@ -199,11 +199,6 @@ float strtof(const char *restrict nptr, char **restrict endptr)
 	return (float)__scanfloat(nptr, endptr);
 }
 
-double strtod(const char *restrict nptr, char **restrict endptr)
-{
-	return (double)__scanfloat(nptr, endptr);
-}
-
 long double strtold(const char *restrict nptr, char **restrict endptr)
 {
 	return __scanfloat(nptr, endptr);
