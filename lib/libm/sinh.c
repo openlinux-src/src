@@ -6,7 +6,10 @@
  */
 double sinh(double x)
 {
-	union {double f; uint64_t i;} u = {.f = x};
+	union {
+		double f;
+		uint64_t i;
+	} u = { .f = x };
 	uint32_t w;
 	double t, h, absx;
 
@@ -14,7 +17,7 @@ double sinh(double x)
 	if (u.i >> 63)
 		h = -h;
 	/* |x| */
-	u.i &= (uint64_t)-1/2;
+	u.i &= (uint64_t)-1 / 2;
 	absx = u.f;
 	w = u.i >> 32;
 
@@ -22,18 +25,18 @@ double sinh(double x)
 	if (w < 0x40862e42) {
 		t = expm1(absx);
 		if (w < 0x3ff00000) {
-			if (w < 0x3ff00000 - (26<<20))
+			if (w < 0x3ff00000 - (26 << 20))
 				/* note: inexact and underflow are raised by expm1 */
 				/* note: this branch avoids spurious underflow */
 				return x;
-			return h*(2*t - t*t/(t+1));
+			return h * (2 * t - t * t / (t + 1));
 		}
 		/* note: |x|>log(0x1p26)+eps could be just h*exp(x) */
-		return h*(t + t/(t+1));
+		return h * (t + t / (t + 1));
 	}
 
 	/* |x| > log(DBL_MAX) or nan */
 	/* note: the result is stored to handle overflow */
-	t = __expo2(absx, 2*h);
+	t = __expo2(absx, 2 * h);
 	return t;
 }

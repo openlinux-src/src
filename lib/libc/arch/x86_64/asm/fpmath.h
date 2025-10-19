@@ -18,7 +18,7 @@ union l2bits {
 	} xbits;
 };
 
-#define LDBL_NBIT 0x80000000
+#define LDBL_NBIT      0x80000000
 #define mask_nbit_l(u) ((u).bits.manh &= ~LDBL_NBIT)
 
 #define LDBL_MANH_SIZE 32

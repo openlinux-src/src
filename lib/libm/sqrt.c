@@ -8,17 +8,17 @@
 /* returns a*b*2^-32 - e, with error 0 <= e < 1.  */
 static inline uint32_t mul32(uint32_t a, uint32_t b)
 {
-	return (uint64_t)a*b >> 32;
+	return (uint64_t)a * b >> 32;
 }
 
 /* returns a*b*2^-64 - e, with error 0 <= e < 3.  */
 static inline uint64_t mul64(uint64_t a, uint64_t b)
 {
-	uint64_t ahi = a>>32;
-	uint64_t alo = a&0xffffffff;
-	uint64_t bhi = b>>32;
-	uint64_t blo = b&0xffffffff;
-	return ahi*bhi + (ahi*blo >> 32) + (alo*bhi >> 32);
+	uint64_t ahi = a >> 32;
+	uint64_t alo = a & 0xffffffff;
+	uint64_t bhi = b >> 32;
+	uint64_t blo = b & 0xffffffff;
+	return ahi * bhi + (ahi * blo >> 32) + (alo * bhi >> 32);
 }
 
 double sqrt(double x)
@@ -48,7 +48,8 @@ double sqrt(double x)
 	   2^e is the exponent part of the result.  */
 	int even = top & 1;
 	m = (ix << 11) | 0x8000000000000000;
-	if (even) m >>= 1;
+	if (even)
+		m >>= 1;
 	top = (top + 0x3ff) >> 1;
 
 	/* approximate r ~ 1/sqrt(m) and s ~ sqrt(m) when m in [1,4)
@@ -111,7 +112,7 @@ double sqrt(double x)
 	i = (ix >> 46) % 128;
 	r = (uint32_t)__rsqrt_tab[i] << 16;
 	/* |r sqrt(m) - 1| < 0x1.fdp-9 */
-	s = mul32(m>>32, r);
+	s = mul32(m >> 32, r);
 	/* |s/sqrt(m) - 1| < 0x1.fdp-9 */
 	d = mul32(s, r);
 	u = three - d;
@@ -126,8 +127,8 @@ double sqrt(double x)
 	r = r << 32;
 	s = mul64(m, r);
 	d = mul64(s, r);
-	u = (three<<32) - d;
-	s = mul64(s, u);  /* repr: 3.61 */
+	u = (three << 32) - d;
+	s = mul64(s, u); /* repr: 3.61 */
 	/* -0x1p-57 < s - sqrt(m) < 0x1.8001p-61 */
 	s = (s - 2) >> 9; /* repr: 12.52 */
 	/* -0x1.09p-52 < s - sqrt(m) < -0x1.fffcp-63 */
@@ -138,7 +139,7 @@ double sqrt(double x)
 	   we can decide by comparing (2^52 s + 0.5)^2 to 2^104 m.  */
 	uint64_t d0, d1, d2;
 	double y, t;
-	d0 = (m << 42) - s*s;
+	d0 = (m << 42) - s * s;
 	d1 = s - d0;
 	d2 = d1 + s + 1;
 	s += d1 >> 63;
@@ -149,8 +150,8 @@ double sqrt(double x)
 		/* handle rounding modes and inexact exception:
 		   only (s+1)^2 == 2^42 m case is exact otherwise
 		   add a tiny value to cause the fenv effects.  */
-		uint64_t tiny = predict_false(d2==0) ? 0 : 0x0010000000000000;
-		tiny |= (d1^d2) & 0x8000000000000000;
+		uint64_t tiny = predict_false(d2 == 0) ? 0 : 0x0010000000000000;
+		tiny |= (d1 ^ d2) & 0x8000000000000000;
 		t = asdouble(tiny);
 		y = eval_as_double(y + t);
 	}

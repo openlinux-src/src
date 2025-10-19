@@ -38,27 +38,31 @@
  */
 float fmaf(float x, float y, float z)
 {
-	#pragma STDC FENV_ACCESS ON
+#pragma STDC FENV_ACCESS ON
 	double xy, result;
-	union {double f; uint64_t i;} u;
+	union {
+		double f;
+		uint64_t i;
+	} u;
 	int e;
 
 	xy = (double)x * y;
 	result = xy + z;
 	u.f = result;
-	e = u.i>>52 & 0x7ff;
+	e = u.i >> 52 & 0x7ff;
 	/* Common case: The double precision result is fine. */
 	if ((u.i & 0x1fffffff) != 0x10000000 || /* not a halfway case */
-		e == 0x7ff ||                   /* NaN */
-		(result - xy == z && result - z == xy) || /* exact */
-		fegetround() != FE_TONEAREST)       /* not round-to-nearest */
+	    e == 0x7ff || /* NaN */
+	    (result - xy == z && result - z == xy) || /* exact */
+	    fegetround() != FE_TONEAREST) /* not round-to-nearest */
 	{
 		/*
 		underflow may not be raised correctly, example:
 		fmaf(0x1p-120f, 0x1p-120f, 0x1p-149f)
 		*/
 #if defined(FE_INEXACT) && defined(FE_UNDERFLOW)
-		if (e < 0x3ff-126 && e >= 0x3ff-149 && fetestexcept(FE_INEXACT)) {
+		if (e < 0x3ff - 126 && e >= 0x3ff - 149 &&
+		    fetestexcept(FE_INEXACT)) {
 			feclearexcept(FE_INEXACT);
 			/* TODO: gcc and clang bug workaround */
 			volatile float vz = z;

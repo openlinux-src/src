@@ -2,7 +2,10 @@
 
 float nexttowardf(float x, long double y)
 {
-	union {float f; uint32_t i;} ux = {x};
+	union {
+		float f;
+		uint32_t i;
+	} ux = { x };
 	uint32_t e;
 
 	if (isnan(x) || isnan(y))
@@ -27,9 +30,9 @@ float nexttowardf(float x, long double y)
 	e = ux.i & 0x7f800000;
 	/* raise overflow if ux.f is infinite and x is finite */
 	if (e == 0x7f800000)
-		FORCE_EVAL(x+x);
+		FORCE_EVAL(x + x);
 	/* raise underflow if ux.f is subnormal or zero */
 	if (e == 0)
-		FORCE_EVAL(x*x + ux.f*ux.f);
+		FORCE_EVAL(x * x + ux.f * ux.f);
 	return ux.f;
 }

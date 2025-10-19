@@ -25,6 +25,10 @@ build: build/$(ARCH)/sysroot/usr/include
 	mkdir -p $@/$(ARCH)/sysroot/bin
 	rsync -aq --no-perms include/ $@/$(ARCH)/sysroot/usr/include
 
+format:
+	find . -name "*.c" -o -name "*.h" | grep -v build | grep -v sys | xargs -r clang-format -i
+
+
 clean:
 	for lib in $(LIBS); do \
 		$(MAKE) -C lib/$$lib clean; \
@@ -32,4 +36,4 @@ clean:
 	$(MAKE) -C bin clean
 	rm -rf build
 
-.PHONY: all build pack clean
+.PHONY: all build pack format clean

@@ -2,7 +2,6 @@
 #include <fenv.h>
 #include "libm.h"
 
-
 #if LDBL_MANT_DIG == 53 && LDBL_MAX_EXP == 1024
 long long llrintl(long double x)
 {
@@ -18,7 +17,7 @@ raises inexact (with tonearest or upward rounding mode)
 */
 long long llrintl(long double x)
 {
-	#pragma STDC FENV_ACCESS ON
+#pragma STDC FENV_ACCESS ON
 	int e;
 
 	e = fetestexcept(FE_INEXACT);

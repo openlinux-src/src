@@ -19,9 +19,9 @@ relerr_log2: 1.83 * 2^-33 (Relative error of logx.)
 relerr_exp2: 1.69 * 2^-34 (Relative error of exp2(ylogx).)
 */
 
-#define N (1 << POWF_LOG2_TABLE_BITS)
-#define T __powf_log2_data.tab
-#define A __powf_log2_data.poly
+#define N   (1 << POWF_LOG2_TABLE_BITS)
+#define T   __powf_log2_data.tab
+#define A   __powf_log2_data.poly
 #define OFF 0x3f330000
 
 /* Subnormal input is normalized so ix has negative biased exponent.
@@ -61,8 +61,8 @@ static inline double_t log2_inline(uint32_t ix)
 
 #undef N
 #undef T
-#define N (1 << EXP2F_TABLE_BITS)
-#define T __exp2f_data.tab
+#define N	  (1 << EXP2F_TABLE_BITS)
+#define T	  __exp2f_data.tab
 #define SIGN_BIAS (1 << (EXP2F_TABLE_BITS + 11))
 
 /* The output of log2 and thus the input of exp2 is either scaled by N
@@ -79,7 +79,7 @@ static inline float exp2_inline(double_t xd, uint32_t sign_bias)
 	kd = roundtoint(xd); /* k */
 	ki = converttoint(xd);
 #else
-#define C __exp2f_data.poly
+#define C     __exp2f_data.poly
 #define SHIFT __exp2f_data.shift_scaled
 	/* x = k/N + r with r in [-1/(2N), 1/(2N)] */
 	kd = eval_as_double(xd + SHIFT);

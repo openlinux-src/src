@@ -14,9 +14,9 @@ typedef double double_t;
 typedef float float_t;
 #endif
 
-#define FP_NAN       0x02
+#define FP_NAN	     0x02
 #define FP_INFINITE  0x01
-#define FP_ZERO      0x10
+#define FP_ZERO	     0x10
 #define FP_SUBNORMAL 0x08
 #define FP_NORMAL    0x04
 
@@ -27,26 +27,26 @@ typedef float float_t;
 #define FP_ILOGB0   (-0x7fffffff)
 #define FP_ILOGBNAN 0x7fffffff
 
-#define MATH_ERRNO       1
-#define MATH_ERREXCEPT   2
+#define MATH_ERRNO	 1
+#define MATH_ERREXCEPT	 2
 #define math_errhandling MATH_ERREXCEPT
 
-#define M_E        2.7182818284590452354
+#define M_E	   2.7182818284590452354
 #define M_EGAMMA   0.5772156649015328606
-#define M_LOG2E    1.4426950408889634074
+#define M_LOG2E	   1.4426950408889634074
 #define M_LOG10E   0.43429448190325182765
-#define M_LN2      0.69314718055994530942
-#define M_LN10     2.30258509299404568402
-#define M_PHI      1.61803398874989484820
-#define M_PI       3.14159265358979323846
-#define M_PI_2     1.57079632679489661923
-#define M_PI_4     0.78539816339744830962
-#define M_1_PI     0.31830988618379067154
+#define M_LN2	   0.69314718055994530942
+#define M_LN10	   2.30258509299404568402
+#define M_PHI	   1.61803398874989484820
+#define M_PI	   3.14159265358979323846
+#define M_PI_2	   1.57079632679489661923
+#define M_PI_4	   0.78539816339744830962
+#define M_1_PI	   0.31830988618379067154
 #define M_1_SQRTPI 1.77245385090551602730
-#define M_2_PI     0.63661977236758134308
+#define M_2_PI	   0.63661977236758134308
 #define M_2_SQRTPI 1.12837916709551257390
-#define M_SQRT2    1.41421356237309504880
-#define M_SQRT3    1.73205080756887729353
+#define M_SQRT2	   1.41421356237309504880
+#define M_SQRT3	   1.73205080756887729353
 #define M_SQRT1_2  0.70710678118654752440
 #define M_SQRT1_3  0.57735026918962576451
 
@@ -54,7 +54,7 @@ typedef float float_t;
 #define HUGE_VALF __builtin_huge_valf()
 #define HUGE_VALL __builtin_huge_vall()
 #define INFINITY  __builtin_inff()
-#define NAN       __builtin_nanf("")
+#define NAN	  __builtin_nanf("")
 
 #define fpclassify(x) __builtin_fpclassify((x))
 #define isfinite(x)   __builtin_isfinite((x))
@@ -62,9 +62,9 @@ typedef float float_t;
 #define isnan(x)      __builtin_isnan((x))
 #define isnormal(x)   __builtin_isnormal((x))
 
-#define isgreater(x, y)      __builtin_isgreater((x), (y))
+#define isgreater(x, y)	     __builtin_isgreater((x), (y))
 #define isgreaterequal(x, y) __builtin_isgreaterequal((x), (y))
-#define isless(x, y)         __builtin_isless((x), (y))
+#define isless(x, y)	     __builtin_isless((x), (y))
 #define islessequal(x, y)    __builtin_islessequal((x), (y))
 #define islessgreater(x, y)  __builtin_islessgreater((x), (y))
 #define isunordered(x, y)    __builtin_isunordered((x), (y))

@@ -35,16 +35,16 @@ struct page {
 extern struct page *__malloc_pvec;
 
 #define SMALL_PAGE_SIZE_SHIFT 16
-#define SMALL_PAGE_SIZE (1 << SMALL_PAGE_SIZE_SHIFT)
-#define SMALL_PAGE_MASK (~((uintptr_t)SMALL_PAGE_SIZE - 1))
+#define SMALL_PAGE_SIZE	      (1 << SMALL_PAGE_SIZE_SHIFT)
+#define SMALL_PAGE_MASK	      (~((uintptr_t)SMALL_PAGE_SIZE - 1))
 
 #define MEDIUM_PAGE_SIZE_SHIFT 22
-#define MEDIUM_PAGE_SIZE (1 << MEDIUM_PAGE_SIZE_SHIFT)
-#define MEDIUM_PAGE_MASK (~((uintptr_t)MEDIUM_PAGE_SIZE - 1))
+#define MEDIUM_PAGE_SIZE       (1 << MEDIUM_PAGE_SIZE_SHIFT)
+#define MEDIUM_PAGE_MASK       (~((uintptr_t)MEDIUM_PAGE_SIZE - 1))
 
 #define LARGE_PAGE_SIZE_SHIFT 26
-#define LARGE_PAGE_SIZE (1 << LARGE_PAGE_SIZE_SHIFT)
-#define LARGE_PAGE_MASK (~((uintptr_t)LARGE_PAGE_SIZE - 1))
+#define LARGE_PAGE_SIZE	      (1 << LARGE_PAGE_SIZE_SHIFT)
+#define LARGE_PAGE_MASK	      (~((uintptr_t)LARGE_PAGE_SIZE - 1))
 
 #define SMALL_CLASS(n) \
 	{ (n * 16), (SMALL_PAGE_SIZE - sizeof(struct page)) / (n * 16) }

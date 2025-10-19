@@ -12,18 +12,18 @@ long double modfl(long double x, long double *iptr)
 }
 #elif (LDBL_MANT_DIG == 64 || LDBL_MANT_DIG == 113) && LDBL_MAX_EXP == 16384
 
-static const long double toint = 1/LDBL_EPSILON;
+static const long double toint = 1 / LDBL_EPSILON;
 
 long double modfl(long double x, long double *iptr)
 {
-	union ldshape u = {x};
+	union ldshape u = { x };
 	int e = (u.i.se & 0x7fff) - 0x3fff;
 	int s = u.i.se >> 15;
 	long double absx;
 	long double y;
 
 	/* no fractional part */
-	if (e >= LDBL_MANT_DIG-1) {
+	if (e >= LDBL_MANT_DIG - 1) {
 		*iptr = x;
 		if (isnan(x))
 			return x;

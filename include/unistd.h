@@ -5,12 +5,12 @@
 #define NULL ((void *)0)
 #endif
 
-#define _POSIX_VERSION 202405L
+#define _POSIX_VERSION	202405L
 #define _POSIX2_VERSION _POSIX_VERSION
 
 #define _XOPEN_VERSION 800
 
-#define STDIN_FILENO 0
+#define STDIN_FILENO  0
 #define STDOUT_FILENO 1
 #define STDERR_FILENO 2
 

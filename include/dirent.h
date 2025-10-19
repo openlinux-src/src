@@ -2,17 +2,17 @@
 #define __DIRENT_H
 
 #define DT_UNKNOWN 0x0
-#define DT_FIFO 0x1
-#define DT_CHR 0x2
-#define DT_DIR 0x4
-#define DT_BLK 0x6
-#define DT_REG 0x8
-#define DT_LNK 0xa
-#define DT_SOCK 0xc
-#define DT_MQ 0xe
-#define DT_SEM 0x10
-#define DT_SHM 0x12
-#define DT_TMO 0x14
+#define DT_FIFO	   0x1
+#define DT_CHR	   0x2
+#define DT_DIR	   0x4
+#define DT_BLK	   0x6
+#define DT_REG	   0x8
+#define DT_LNK	   0xa
+#define DT_SOCK	   0xc
+#define DT_MQ	   0xe
+#define DT_SEM	   0x10
+#define DT_SHM	   0x12
+#define DT_TMO	   0x14
 
 typedef struct __DIR DIR;
 typedef __UINT64_TYPE__ ino_t;

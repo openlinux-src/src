@@ -18,26 +18,27 @@
 #include <math.h>
 #include <stdint.h>
 
-static const uint32_t
-B1 = 715094163, /* B1 = (1023-1023/3-0.03306235651)*2**20 */
-B2 = 696219795; /* B2 = (1023-1023/3-54/3-0.03306235651)*2**20 */
+static const uint32_t B1 = 715094163, /* B1 = (1023-1023/3-0.03306235651)*2**20 */
+	B2 = 696219795; /* B2 = (1023-1023/3-54/3-0.03306235651)*2**20 */
 
 /* |1/cbrt(x) - p(x)| < 2**-23.5 (~[-7.93e-8, 7.929e-8]). */
-static const double
-P0 =  1.87595182427177009643,  /* 0x3ffe03e6, 0x0f61e692 */
-P1 = -1.88497979543377169875,  /* 0xbffe28e0, 0x92f02420 */
-P2 =  1.621429720105354466140, /* 0x3ff9f160, 0x4a49d6c2 */
-P3 = -0.758397934778766047437, /* 0xbfe844cb, 0xbee751d9 */
-P4 =  0.145996192886612446982; /* 0x3fc2b000, 0xd4e4edd7 */
+static const double P0 = 1.87595182427177009643, /* 0x3ffe03e6, 0x0f61e692 */
+	P1 = -1.88497979543377169875, /* 0xbffe28e0, 0x92f02420 */
+	P2 = 1.621429720105354466140, /* 0x3ff9f160, 0x4a49d6c2 */
+	P3 = -0.758397934778766047437, /* 0xbfe844cb, 0xbee751d9 */
+	P4 = 0.145996192886612446982; /* 0x3fc2b000, 0xd4e4edd7 */
 
 double cbrt(double x)
 {
-	union {double f; uint64_t i;} u = {x};
-	double_t r,s,t,w;
-	uint32_t hx = u.i>>32 & 0x7fffffff;
+	union {
+		double f;
+		uint64_t i;
+	} u = { x };
+	double_t r, s, t, w;
+	uint32_t hx = u.i >> 32 & 0x7fffffff;
 
-	if (hx >= 0x7ff00000)  /* cbrt(NaN,INF) is itself */
-		return x+x;
+	if (hx >= 0x7ff00000) /* cbrt(NaN,INF) is itself */
+		return x + x;
 
 	/*
 	 * Rough cbrt to 5 bits:
@@ -55,14 +56,14 @@ double cbrt(double x)
 	 * division rounds towards minus infinity; this is also efficient.
 	 */
 	if (hx < 0x00100000) { /* zero or subnormal? */
-		u.f = x*0x1p54;
-		hx = u.i>>32 & 0x7fffffff;
+		u.f = x * 0x1p54;
+		hx = u.i >> 32 & 0x7fffffff;
 		if (hx == 0)
-			return x;  /* cbrt(0) is itself */
-		hx = hx/3 + B2;
+			return x; /* cbrt(0) is itself */
+		hx = hx / 3 + B2;
 	} else
-		hx = hx/3 + B1;
-	u.i &= 1ULL<<63;
+		hx = hx / 3 + B1;
+	u.i &= 1ULL << 63;
 	u.i |= (uint64_t)hx << 32;
 	t = u.f;
 
@@ -76,8 +77,8 @@ double cbrt(double x)
 	 *
 	 * Try to optimize for parallel evaluation as in __tanf.c.
 	 */
-	r = (t*t)*(t/x);
-	t = t*((P0+r*(P1+r*P2))+((r*r)*r)*(P3+r*P4));
+	r = (t * t) * (t / x);
+	t = t * ((P0 + r * (P1 + r * P2)) + ((r * r) * r) * (P3 + r * P4));
 
 	/*
 	 * Round t away from zero to 23 bits (sloppily except for ensuring that
@@ -94,10 +95,10 @@ double cbrt(double x)
 	t = u.f;
 
 	/* one step Newton iteration to 53 bits with error < 0.667 ulps */
-	s = t*t;         /* t*t is exact */
-	r = x/s;         /* error <= 0.5 ulps; |r| < |t| */
-	w = t+t;         /* t+t is exact */
-	r = (r-t)/(w+r); /* r-t is exact; w+r ~= 3*t */
-	t = t+t*r;       /* error <= 0.5 + 0.5/3 + epsilon */
+	s = t * t; /* t*t is exact */
+	r = x / s; /* error <= 0.5 ulps; |r| < |t| */
+	w = t + t; /* t+t is exact */
+	r = (r - t) / (w + r); /* r-t is exact; w+r ~= 3*t */
+	t = t + t * r; /* error <= 0.5 + 0.5/3 + epsilon */
 	return t;
 }

@@ -47,7 +47,7 @@ the last few bits of logc are rounded away so k*ln2hi + logc has no rounding
 error and the interval for z is selected such that near x == 1, where log(x)
 is tiny, large cancellation error is avoided in logc + poly(z/c - 1).  */
 .tab = {
-#define A(a, b, c) {a, 0, b, c},
+#define A(a, b, c) { a, 0, b, c },
 A(0x1.6a00000000000p+0, -0x1.62c82f2b9c800p-2, 0x1.ab42428375680p-48)
 A(0x1.6800000000000p+0, -0x1.5d1bdbf580800p-2, -0x1.ca508d8e0f720p-46)
 A(0x1.6600000000000p+0, -0x1.5767717455800p-2, -0x1.362a4d5b6506dp-45)

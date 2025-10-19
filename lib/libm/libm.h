@@ -11,116 +11,110 @@
 
 #define __PDP_ENDIAN 3412
 
-#define BIG_ENDIAN      __ORDER_BIG_ENDIAN__
-#define LITTLE_ENDIAN   __ORDER_LITTLE_ENDIAN__
-#define PDP_ENDIAN      __ORDER_PDP_ENDIAN
-#define BYTE_ORDER      __BYTE_ORDER__
-#define __BYTE_ORDER    __BYTE_ORDER__
+#define BIG_ENDIAN	__ORDER_BIG_ENDIAN__
+#define LITTLE_ENDIAN	__ORDER_LITTLE_ENDIAN__
+#define PDP_ENDIAN	__ORDER_PDP_ENDIAN
+#define BYTE_ORDER	__BYTE_ORDER__
+#define __BYTE_ORDER	__BYTE_ORDER__
 #define __LITTLE_ENDIAN __ORDER_LITTLE_ENDIAN__
 
 static __inline uint16_t __bswap16(uint16_t __x)
 {
-    return __x << 8 | __x >> 8;
+	return __x << 8 | __x >> 8;
 }
 
 static __inline uint32_t __bswap32(uint32_t __x)
 {
-    return __x >> 24 | __x >> 8 & 0xff00 | __x << 8 & 0xff0000 | __x << 24;
+	return __x >> 24 | __x >> 8 & 0xff00 | __x << 8 & 0xff0000 | __x << 24;
 }
 
 static __inline uint64_t __bswap64(uint64_t __x)
 {
-    return (__bswap32(__x) + 0ULL) << 32 | __bswap32(__x >> 32);
+	return (__bswap32(__x) + 0ULL) << 32 | __bswap32(__x >> 32);
 }
 
 #if __BYTE_ORDER__ == __ORDER_LITTLE_ENDIAN__
-# define htobe16(x) __bswap16(x)
-# define be16toh(x) __bswap16(x)
-# define htobe32(x) __bswap32(x)
-# define be32toh(x) __bswap32(x)
-# define htobe64(x) __bswap64(x)
-# define be64toh(x) __bswap64(x)
-# define htole16(x) (uint16_t) (x)
-# define le16toh(x) (uint16_t) (x)
-# define htole32(x) (uint32_t) (x)
-# define le32toh(x) (uint32_t) (x)
-# define htole64(x) (uint64_t) (x)
-# define le64toh(x) (uint64_t) (x)
+#define htobe16(x) __bswap16(x)
+#define be16toh(x) __bswap16(x)
+#define htobe32(x) __bswap32(x)
+#define be32toh(x) __bswap32(x)
+#define htobe64(x) __bswap64(x)
+#define be64toh(x) __bswap64(x)
+#define htole16(x) (uint16_t)(x)
+#define le16toh(x) (uint16_t)(x)
+#define htole32(x) (uint32_t)(x)
+#define le32toh(x) (uint32_t)(x)
+#define htole64(x) (uint64_t)(x)
+#define le64toh(x) (uint64_t)(x)
 #else
-# define htobe16(x) (uint16_t) (x)
-# define be16toh(x) (uint16_t) (x)
-# define htobe32(x) (uint32_t) (x)
-# define be32toh(x) (uint32_t) (x)
-# define htobe64(x) (uint64_t) (x)
-# define be64toh(x) (uint64_t) (x)
-# define htole16(x) __bswap16(x)
-# define le16toh(x) __bswap16(x)
-# define htole32(x) __bswap32(x)
-# define le32toh(x) __bswap32(x)
-# define htole64(x) __bswap64(x)
-# define le64toh(x) __bswap64(x)
+#define htobe16(x) (uint16_t)(x)
+#define be16toh(x) (uint16_t)(x)
+#define htobe32(x) (uint32_t)(x)
+#define be32toh(x) (uint32_t)(x)
+#define htobe64(x) (uint64_t)(x)
+#define be64toh(x) (uint64_t)(x)
+#define htole16(x) __bswap16(x)
+#define le16toh(x) __bswap16(x)
+#define htole32(x) __bswap32(x)
+#define le32toh(x) __bswap32(x)
+#define htole64(x) __bswap64(x)
+#define le64toh(x) __bswap64(x)
 #endif
 
 #if LDBL_MANT_DIG == 53 && LDBL_MAX_EXP == 1024
-#elif LDBL_MANT_DIG == 64 && LDBL_MAX_EXP == 16384 && __BYTE_ORDER__ == __ORDER_LITTLE_ENDIAN__
-union ldshape
-{
-    long double f;
-    struct
-    {
-        uint64_t m;
-        uint16_t se;
-    } i;
+#elif LDBL_MANT_DIG == 64 && LDBL_MAX_EXP == 16384 && \
+	__BYTE_ORDER__ == __ORDER_LITTLE_ENDIAN__
+union ldshape {
+	long double f;
+	struct {
+		uint64_t m;
+		uint16_t se;
+	} i;
 };
-#elif LDBL_MANT_DIG == 64 && LDBL_MAX_EXP == 16384 && __BYTE_ORDER__ == __ORDER_BIG_ENDIAN__
+#elif LDBL_MANT_DIG == 64 && LDBL_MAX_EXP == 16384 && \
+	__BYTE_ORDER__ == __ORDER_BIG_ENDIAN__
 /* This is the m68k variant of 80-bit long double, and this definition only works
  * on archs where the alignment requirement of uint64_t is <= 4. */
-union ldshape
-{
-    long double f;
-    struct
-    {
-        uint16_t se;
-        uint16_t pad;
-        uint64_t m;
-    } i;
+union ldshape {
+	long double f;
+	struct {
+		uint16_t se;
+		uint16_t pad;
+		uint64_t m;
+	} i;
 };
-#elif LDBL_MANT_DIG == 113 && LDBL_MAX_EXP == 16384 && __BYTE_ORDER__ == __ORDER_LITTLE_ENDIAN__
-union ldshape
-{
-    long double f;
-    struct
-    {
-        uint64_t lo;
-        uint32_t mid;
-        uint16_t top;
-        uint16_t se;
-    } i;
-    struct
-    {
-        uint64_t lo;
-        uint64_t hi;
-    } i2;
+#elif LDBL_MANT_DIG == 113 && LDBL_MAX_EXP == 16384 && \
+	__BYTE_ORDER__ == __ORDER_LITTLE_ENDIAN__
+union ldshape {
+	long double f;
+	struct {
+		uint64_t lo;
+		uint32_t mid;
+		uint16_t top;
+		uint16_t se;
+	} i;
+	struct {
+		uint64_t lo;
+		uint64_t hi;
+	} i2;
 };
-#elif LDBL_MANT_DIG == 113 && LDBL_MAX_EXP == 16384 && __BYTE_ORDER == __BIG_ENDIAN
-union ldshape
-{
-    long double f;
-    struct
-    {
-        uint16_t se;
-        uint16_t top;
-        uint32_t mid;
-        uint64_t lo;
-    } i;
-    struct
-    {
-        uint64_t hi;
-        uint64_t lo;
-    } i2;
+#elif LDBL_MANT_DIG == 113 && LDBL_MAX_EXP == 16384 && \
+	__BYTE_ORDER == __BIG_ENDIAN
+union ldshape {
+	long double f;
+	struct {
+		uint16_t se;
+		uint16_t top;
+		uint32_t mid;
+		uint64_t lo;
+	} i;
+	struct {
+		uint64_t hi;
+		uint64_t lo;
+	} i2;
 };
 #else
-# error Unsupported long double representation
+#error Unsupported long double representation
 #endif
 
 /* Support non-nearest rounding mode.  */
@@ -129,14 +123,14 @@ union ldshape
 #define WANT_SNAN 0
 
 #if WANT_SNAN
-# error SNaN is unsupported
+#error SNaN is unsupported
 #else
-# define issignalingf_inline(x) 0
-# define issignaling_inline(x)  0
+#define issignalingf_inline(x) 0
+#define issignaling_inline(x)  0
 #endif
 
 #ifndef TOINT_INTRINSICS
-# define TOINT_INTRINSICS 0
+#define TOINT_INTRINSICS 0
 #endif
 
 #if TOINT_INTRINSICS
@@ -153,11 +147,11 @@ static int32_t converttoint(double_t);
 
 /* Helps static branch prediction so hot path can be better optimized.  */
 #ifdef __GNUC__
-# define predict_true(x)  __builtin_expect(!!(x), 1)
-# define predict_false(x) __builtin_expect(x, 0)
+#define predict_true(x)	 __builtin_expect(!!(x), 1)
+#define predict_false(x) __builtin_expect(x, 0)
 #else
-# define predict_true(x)  (x)
-# define predict_false(x) (x)
+#define predict_true(x)	 (x)
+#define predict_false(x) (x)
 #endif
 
 /* Evaluate an expression as the specified type. With standard excess
@@ -167,14 +161,14 @@ static int32_t converttoint(double_t);
 
 static inline float eval_as_float(float x)
 {
-    float y = x;
-    return y;
+	float y = x;
+	return y;
 }
 
 static inline double eval_as_double(double x)
 {
-    double y = x;
-    return y;
+	double y = x;
+	return y;
 }
 
 /* fp_barrier returns its input, but limits code transformations
@@ -182,29 +176,29 @@ static inline double eval_as_double(double x)
    an arbitrary value.  */
 
 #ifndef fp_barrierf
-# define fp_barrierf fp_barrierf
+#define fp_barrierf fp_barrierf
 static inline float fp_barrierf(float x)
 {
-    volatile float y = x;
-    return y;
+	volatile float y = x;
+	return y;
 }
 #endif
 
 #ifndef fp_barrier
-# define fp_barrier fp_barrier
+#define fp_barrier fp_barrier
 static inline double fp_barrier(double x)
 {
-    volatile double y = x;
-    return y;
+	volatile double y = x;
+	return y;
 }
 #endif
 
 #ifndef fp_barrierl
-# define fp_barrierl fp_barrierl
+#define fp_barrierl fp_barrierl
 static inline long double fp_barrierl(long double x)
 {
-    volatile long double y = x;
-    return y;
+	volatile long double y = x;
+	return y;
 }
 #endif
 
@@ -215,103 +209,103 @@ static inline long double fp_barrierl(long double x)
    used to evaluate an expression for its fenv side-effects only.   */
 
 #ifndef fp_force_evalf
-# define fp_force_evalf fp_force_evalf
+#define fp_force_evalf fp_force_evalf
 static inline void fp_force_evalf(float x)
 {
-    volatile float y;
-    y = x;
+	volatile float y;
+	y = x;
 }
 #endif
 
 #ifndef fp_force_eval
-# define fp_force_eval fp_force_eval
+#define fp_force_eval fp_force_eval
 static inline void fp_force_eval(double x)
 {
-    volatile double y;
-    y = x;
+	volatile double y;
+	y = x;
 }
 #endif
 
 #ifndef fp_force_evall
-# define fp_force_evall fp_force_evall
+#define fp_force_evall fp_force_evall
 static inline void fp_force_evall(long double x)
 {
-    volatile long double y;
-    y = x;
+	volatile long double y;
+	y = x;
 }
 #endif
 
-#define FORCE_EVAL(x)                                                                                                  \
-    do {                                                                                                               \
-        if (sizeof(x) == sizeof(float)) {                                                                              \
-            fp_force_evalf(x);                                                                                         \
-        } else if (sizeof(x) == sizeof(double)) {                                                                      \
-            fp_force_eval(x);                                                                                          \
-        } else {                                                                                                       \
-            fp_force_evall(x);                                                                                         \
-        }                                                                                                              \
-    } while (0)
+#define FORCE_EVAL(x)                                     \
+	do {                                              \
+		if (sizeof(x) == sizeof(float)) {         \
+			fp_force_evalf(x);                \
+		} else if (sizeof(x) == sizeof(double)) { \
+			fp_force_eval(x);                 \
+		} else {                                  \
+			fp_force_evall(x);                \
+		}                                         \
+	} while (0)
 
-#define asuint(f)                                                                                                      \
-    ((union {                                                                                                          \
-        float _f;                                                                                                      \
-        uint32_t _i;                                                                                                   \
-    }) {f})                                                                                                            \
-        ._i
-#define asfloat(i)                                                                                                     \
-    ((union {                                                                                                          \
-        uint32_t _i;                                                                                                   \
-        float _f;                                                                                                      \
-    }) {i})                                                                                                            \
-        ._f
-#define asuint64(f)                                                                                                    \
-    ((union {                                                                                                          \
-        double _f;                                                                                                     \
-        uint64_t _i;                                                                                                   \
-    }) {f})                                                                                                            \
-        ._i
-#define asdouble(i)                                                                                                    \
-    ((union {                                                                                                          \
-        uint64_t _i;                                                                                                   \
-        double _f;                                                                                                     \
-    }) {i})                                                                                                            \
-        ._f
+#define asuint(f)            \
+	((union {            \
+		float _f;    \
+		uint32_t _i; \
+	}){ f })             \
+		._i
+#define asfloat(i)           \
+	((union {            \
+		uint32_t _i; \
+		float _f;    \
+	}){ i })             \
+		._f
+#define asuint64(f)          \
+	((union {            \
+		double _f;   \
+		uint64_t _i; \
+	}){ f })             \
+		._i
+#define asdouble(i)          \
+	((union {            \
+		uint64_t _i; \
+		double _f;   \
+	}){ i })             \
+		._f
 
-#define EXTRACT_WORDS(hi, lo, d)                                                                                       \
-    do {                                                                                                               \
-        uint64_t __u = asuint64(d);                                                                                    \
-        (hi) = __u >> 32;                                                                                              \
-        (lo) = (uint32_t) __u;                                                                                         \
-    } while (0)
+#define EXTRACT_WORDS(hi, lo, d)            \
+	do {                                \
+		uint64_t __u = asuint64(d); \
+		(hi) = __u >> 32;           \
+		(lo) = (uint32_t)__u;       \
+	} while (0)
 
-#define GET_HIGH_WORD(hi, d)                                                                                           \
-    do {                                                                                                               \
-        (hi) = asuint64(d) >> 32;                                                                                      \
-    } while (0)
+#define GET_HIGH_WORD(hi, d)              \
+	do {                              \
+		(hi) = asuint64(d) >> 32; \
+	} while (0)
 
-#define GET_LOW_WORD(lo, d)                                                                                            \
-    do {                                                                                                               \
-        (lo) = (uint32_t) asuint64(d);                                                                                 \
-    } while (0)
+#define GET_LOW_WORD(lo, d)                   \
+	do {                                  \
+		(lo) = (uint32_t)asuint64(d); \
+	} while (0)
 
-#define INSERT_WORDS(d, hi, lo)                                                                                        \
-    do {                                                                                                               \
-        (d) = asdouble(((uint64_t) (hi) << 32) | (uint32_t) (lo));                                                     \
-    } while (0)
+#define INSERT_WORDS(d, hi, lo)                                          \
+	do {                                                             \
+		(d) = asdouble(((uint64_t)(hi) << 32) | (uint32_t)(lo)); \
+	} while (0)
 
-#define SET_HIGH_WORD(d, hi) INSERT_WORDS(d, hi, (uint32_t) asuint64(d))
+#define SET_HIGH_WORD(d, hi) INSERT_WORDS(d, hi, (uint32_t)asuint64(d))
 
 #define SET_LOW_WORD(d, lo) INSERT_WORDS(d, asuint64(d) >> 32, lo)
 
-#define GET_FLOAT_WORD(w, d)                                                                                           \
-    do {                                                                                                               \
-        (w) = asuint(d);                                                                                               \
-    } while (0)
+#define GET_FLOAT_WORD(w, d)     \
+	do {                     \
+		(w) = asuint(d); \
+	} while (0)
 
-#define SET_FLOAT_WORD(d, w)                                                                                           \
-    do {                                                                                                               \
-        (d) = asfloat(w);                                                                                              \
-    } while (0)
+#define SET_FLOAT_WORD(d, w)      \
+	do {                      \
+		(d) = asfloat(w); \
+	} while (0)
 
 hidden int __rem_pio2_large(double *, double *, int, int, int);
 
@@ -354,6 +348,7 @@ hidden double __math_invalid(double);
 hidden long double __math_invalidl(long double);
 #endif
 
-#define weak_alias(old, new) extern __typeof(old) new __attribute__((__weak__, __alias__(#old)))
+#define weak_alias(old, new) \
+	extern __typeof(old) new __attribute__((__weak__, __alias__(#old)))
 
 #endif

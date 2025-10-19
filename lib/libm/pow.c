@@ -17,12 +17,12 @@ relerr_log: 1.3 * 2^-68 (Relative error of log, 1.5 * 2^-68 without fma)
 ulperr_exp: 0.509 ULP (ULP error of exp, 0.511 ULP without fma)
 */
 
-#define T __pow_log_data.tab
-#define A __pow_log_data.poly
+#define T     __pow_log_data.tab
+#define A     __pow_log_data.poly
 #define Ln2hi __pow_log_data.ln2hi
 #define Ln2lo __pow_log_data.ln2lo
-#define N (1 << POW_LOG_TABLE_BITS)
-#define OFF 0x3fe6955500000000
+#define N     (1 << POW_LOG_TABLE_BITS)
+#define OFF   0x3fe6955500000000
 
 /* Top 12 bits of a double (sign and exponent bits).  */
 static inline uint32_t top12(double x)
@@ -102,17 +102,17 @@ static inline double_t log_inline(uint64_t ix, double_t *tail)
 
 #undef N
 #undef T
-#define N (1 << EXP_TABLE_BITS)
-#define InvLn2N __exp_data.invln2N
+#define N	  (1 << EXP_TABLE_BITS)
+#define InvLn2N	  __exp_data.invln2N
 #define NegLn2hiN __exp_data.negln2hiN
 #define NegLn2loN __exp_data.negln2loN
-#define Shift __exp_data.shift
-#define T __exp_data.tab
-#define C2 __exp_data.poly[5 - EXP_POLY_ORDER]
-#define C3 __exp_data.poly[6 - EXP_POLY_ORDER]
-#define C4 __exp_data.poly[7 - EXP_POLY_ORDER]
-#define C5 __exp_data.poly[8 - EXP_POLY_ORDER]
-#define C6 __exp_data.poly[9 - EXP_POLY_ORDER]
+#define Shift	  __exp_data.shift
+#define T	  __exp_data.tab
+#define C2	  __exp_data.poly[5 - EXP_POLY_ORDER]
+#define C3	  __exp_data.poly[6 - EXP_POLY_ORDER]
+#define C4	  __exp_data.poly[7 - EXP_POLY_ORDER]
+#define C5	  __exp_data.poly[8 - EXP_POLY_ORDER]
+#define C6	  __exp_data.poly[9 - EXP_POLY_ORDER]
 
 /* Handle cases that may overflow or underflow when computing the result that
    is scale*(1+TMP) without intermediate rounding.  The bit representation of

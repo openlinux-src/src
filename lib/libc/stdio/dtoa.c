@@ -217,7 +217,7 @@
 static atomic_flag dtoa_lock[2] = { ATOMIC_FLAG_INIT, ATOMIC_FLAG_INIT };
 
 #define ACQUIRE_DTOA_LOCK(n) LIBC_LOCK(dtoa_lock[(n)])
-#define FREE_DTOA_LOCK(n) LIBC_UNLOCK(dtoa_lock[(n)])
+#define FREE_DTOA_LOCK(n)    LIBC_UNLOCK(dtoa_lock[(n)])
 
 #define dtoa_get_threadno() thrd_current()->tid
 
@@ -244,7 +244,7 @@ typedef unsigned Long ULong;
 int dtoa_stats[7]; /* strtod_{64,96,bigcomp},dtoa_{exact,64,96,bigcomp} */
 #else
 #define assert(x) /*nothing*/
-#define Debug(x) /*nothing*/
+#define Debug(x)  /*nothing*/
 #endif
 
 #include "stdlib.h"
@@ -324,26 +324,26 @@ static double private_mem[PRIVATE_mem], *pmem_next = private_mem;
 #ifdef Bad_float_h
 
 #ifdef IEEE_Arith
-#define DBL_DIG 15
+#define DBL_DIG	       15
 #define DBL_MAX_10_EXP 308
-#define DBL_MAX_EXP 1024
-#define FLT_RADIX 2
+#define DBL_MAX_EXP    1024
+#define FLT_RADIX      2
 #endif /*IEEE_Arith*/
 
 #ifdef IBM
-#define DBL_DIG 16
+#define DBL_DIG	       16
 #define DBL_MAX_10_EXP 75
-#define DBL_MAX_EXP 63
-#define FLT_RADIX 16
-#define DBL_MAX 7.2370055773322621e+75
+#define DBL_MAX_EXP    63
+#define FLT_RADIX      16
+#define DBL_MAX	       7.2370055773322621e+75
 #endif
 
 #ifdef VAX
-#define DBL_DIG 16
+#define DBL_DIG	       16
 #define DBL_MAX_10_EXP 38
-#define DBL_MAX_EXP 127
-#define FLT_RADIX 2
-#define DBL_MAX 1.7014118346046923e+38
+#define DBL_MAX_EXP    127
+#define FLT_RADIX      2
+#define DBL_MAX	       1.7014118346046923e+38
 #endif
 
 #ifndef LONG_MAX
@@ -1312,7 +1312,7 @@ static int pfivebits[25] = { 3,	 5,  7,	 10, 12, 14, 17, 19, 21, 24, 26, 28, 31,
 #define word0(x) (x)->L[0]
 #define word1(x) (x)->L[1]
 #endif
-#define dval(x) (x)->d
+#define dval(x)	 (x)->d
 #define LLval(x) (x)->LL
 
 #ifndef STRTOD_DIGLIM
@@ -1346,32 +1346,32 @@ extern int strtod_diglim;
 /* Int_max = floor(P*log(FLT_RADIX)/log(10) - 1) */
 
 #ifdef IEEE_Arith
-#define Exp_shift 20
-#define Exp_shift1 20
-#define Exp_msk1 0x100000
-#define Exp_msk11 0x100000
-#define Exp_mask 0x7ff00000
-#define P 53
-#define Nbits 53
-#define Bias 1023
-#define Emax 1023
-#define Emin (-1022)
-#define Exp_1 0x3ff00000
-#define Exp_11 0x3ff00000
-#define Ebits 11
-#define Frac_mask 0xfffff
-#define Frac_mask1 0xfffff
-#define Ten_pmax 22
-#define Bletch 0x10
-#define Bndry_mask 0xfffff
+#define Exp_shift   20
+#define Exp_shift1  20
+#define Exp_msk1    0x100000
+#define Exp_msk11   0x100000
+#define Exp_mask    0x7ff00000
+#define P	    53
+#define Nbits	    53
+#define Bias	    1023
+#define Emax	    1023
+#define Emin	    (-1022)
+#define Exp_1	    0x3ff00000
+#define Exp_11	    0x3ff00000
+#define Ebits	    11
+#define Frac_mask   0xfffff
+#define Frac_mask1  0xfffff
+#define Ten_pmax    22
+#define Bletch	    0x10
+#define Bndry_mask  0xfffff
 #define Bndry_mask1 0xfffff
-#define LSB 1
-#define Sign_bit 0x80000000
-#define Log2P 1
-#define Tiny0 0
-#define Tiny1 1
-#define Quick_max 14
-#define Int_max 14
+#define LSB	    1
+#define Sign_bit    0x80000000
+#define Log2P	    1
+#define Tiny0	    0
+#define Tiny1	    1
+#define Quick_max   14
+#define Int_max	    14
 #ifndef NO_IEEE_Scale
 #define Avoid_Underflow
 #ifdef Flush_Denorm /* debugging option */
@@ -1402,62 +1402,62 @@ extern int strtod_diglim;
 #define Sudden_Underflow
 #ifdef IBM
 #undef Flt_Rounds
-#define Flt_Rounds 0
-#define Exp_shift 24
-#define Exp_shift1 24
-#define Exp_msk1 0x1000000
-#define Exp_msk11 0x1000000
-#define Exp_mask 0x7f000000
-#define P 14
-#define Nbits 56
-#define Bias 65
-#define Emax 248
-#define Emin (-260)
-#define Exp_1 0x41000000
-#define Exp_11 0x41000000
-#define Ebits 8 /* exponent has 7 bits, but 8 is the right value in b2d */
-#define Frac_mask 0xffffff
-#define Frac_mask1 0xffffff
-#define Bletch 4
-#define Ten_pmax 22
-#define Bndry_mask 0xefffff
+#define Flt_Rounds  0
+#define Exp_shift   24
+#define Exp_shift1  24
+#define Exp_msk1    0x1000000
+#define Exp_msk11   0x1000000
+#define Exp_mask    0x7f000000
+#define P	    14
+#define Nbits	    56
+#define Bias	    65
+#define Emax	    248
+#define Emin	    (-260)
+#define Exp_1	    0x41000000
+#define Exp_11	    0x41000000
+#define Ebits	    8 /* exponent has 7 bits, but 8 is the right value in b2d */
+#define Frac_mask   0xffffff
+#define Frac_mask1  0xffffff
+#define Bletch	    4
+#define Ten_pmax    22
+#define Bndry_mask  0xefffff
 #define Bndry_mask1 0xffffff
-#define LSB 1
-#define Sign_bit 0x80000000
-#define Log2P 4
-#define Tiny0 0x100000
-#define Tiny1 0
-#define Quick_max 14
-#define Int_max 15
+#define LSB	    1
+#define Sign_bit    0x80000000
+#define Log2P	    4
+#define Tiny0	    0x100000
+#define Tiny1	    0
+#define Quick_max   14
+#define Int_max	    15
 #else /* VAX */
 #undef Flt_Rounds
-#define Flt_Rounds 1
-#define Exp_shift 23
-#define Exp_shift1 7
-#define Exp_msk1 0x80
-#define Exp_msk11 0x800000
-#define Exp_mask 0x7f80
-#define P 56
-#define Nbits 56
-#define Bias 129
-#define Emax 126
-#define Emin (-129)
-#define Exp_1 0x40800000
-#define Exp_11 0x4080
-#define Ebits 8
-#define Frac_mask 0x7fffff
-#define Frac_mask1 0xffff007f
-#define Ten_pmax 24
-#define Bletch 2
-#define Bndry_mask 0xffff007f
+#define Flt_Rounds  1
+#define Exp_shift   23
+#define Exp_shift1  7
+#define Exp_msk1    0x80
+#define Exp_msk11   0x800000
+#define Exp_mask    0x7f80
+#define P	    56
+#define Nbits	    56
+#define Bias	    129
+#define Emax	    126
+#define Emin	    (-129)
+#define Exp_1	    0x40800000
+#define Exp_11	    0x4080
+#define Ebits	    8
+#define Frac_mask   0x7fffff
+#define Frac_mask1  0xffff007f
+#define Ten_pmax    24
+#define Bletch	    2
+#define Bndry_mask  0xffff007f
 #define Bndry_mask1 0xffff007f
-#define LSB 0x10000
-#define Sign_bit 0x8000
-#define Log2P 1
-#define Tiny0 0x80
-#define Tiny1 0
-#define Quick_max 15
-#define Int_max 15
+#define LSB	    0x10000
+#define Sign_bit    0x8000
+#define Log2P	    1
+#define Tiny0	    0x80
+#define Tiny1	    0
+#define Quick_max   15
+#define Int_max	    15
 #endif /* IBM, VAX */
 #endif /* IEEE_Arith */
 
@@ -1471,11 +1471,11 @@ extern int strtod_diglim;
 #endif
 
 #ifdef RND_PRODQUOT
-#define rounded_product(a, b) a = rnd_prod(a, b)
+#define rounded_product(a, b)  a = rnd_prod(a, b)
 #define rounded_quotient(a, b) a = rnd_quot(a, b)
 extern double rnd_prod(double, double), rnd_quot(double, double);
 #else
-#define rounded_product(a, b) a *= b
+#define rounded_product(a, b)  a *= b
 #define rounded_quotient(a, b) a /= b
 #endif
 
@@ -1565,10 +1565,10 @@ static ThInfo *get_TI(void)
 	return &TI0;
 }
 #define freelist TI->Freelist
-#define p5s TI->P5s
+#define p5s	 TI->P5s
 #else
 #define freelist TI0.Freelist
-#define p5s TI0.P5s
+#define p5s	 TI0.P5s
 #endif
 
 static Bigint *Balloc(int k MTd)
@@ -2600,11 +2600,11 @@ static void hexnan(U *rvp, const char **sp)
 #ifdef Pack_32
 #define ULbits 32
 #define kshift 5
-#define kmask 31
+#define kmask  31
 #else
 #define ULbits 16
 #define kshift 4
-#define kmask 15
+#define kmask  15
 #endif
 
 #if !defined(NO_HEX_FP) || defined(Honor_FLT_ROUNDS) /*{*/

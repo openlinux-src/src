@@ -27,7 +27,8 @@ void sincos(double x, double *sin, double *cos)
 		/* if |x| < 2**-27 * sqrt(2) */
 		if (ix < 0x3e46a09e) {
 			/* raise inexact if x!=0 and underflow if subnormal */
-			FORCE_EVAL(ix < 0x00100000 ? x/0x1p120f : x+0x1p120f);
+			FORCE_EVAL(ix < 0x00100000 ? x / 0x1p120f :
+						     x + 0x1p120f);
 			*sin = x;
 			*cos = 1.0;
 			return;
@@ -47,7 +48,7 @@ void sincos(double x, double *sin, double *cos)
 	n = __rem_pio2(x, y);
 	s = __sin(y[0], y[1], 1);
 	c = __cos(y[0], y[1]);
-	switch (n&3) {
+	switch (n & 3) {
 	case 0:
 		*sin = s;
 		*cos = c;

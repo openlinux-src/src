@@ -9,7 +9,7 @@
 #include <stdlib.h>
 #include <sys/wait.h>
 
-#define MAX_BUILTINS 16
+#define MAX_BUILTINS	  16
 #define BUILTIN_HASH_SIZE 16
 
 /* Builtin function pointer type */

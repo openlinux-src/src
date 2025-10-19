@@ -6,7 +6,7 @@
 
 /* From embeddedartistry/libc */
 #define CASEMAP(u1, u2, l) { (u1), (l) - (u1), (u2) - (u1) + 1 }
-#define CASELACE(u1, u2) CASEMAP((u1), (u2), (u1) + 1)
+#define CASELACE(u1, u2)   CASEMAP((u1), (u2), (u1) + 1)
 
 static const struct {
 	unsigned short upper;

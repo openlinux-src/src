@@ -7,8 +7,8 @@
 
 #define hidden __attribute__((visibility("hidden")))
 
-#define LOG_TABLE_BITS 7
-#define LOG_POLY_ORDER 6
+#define LOG_TABLE_BITS	7
+#define LOG_POLY_ORDER	6
 #define LOG_POLY1_ORDER 12
 extern hidden const struct log_data {
 	double ln2hi;

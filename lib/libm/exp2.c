@@ -10,14 +10,14 @@
 #include "libm.h"
 #include "exp_data.h"
 
-#define N (1 << EXP_TABLE_BITS)
+#define N     (1 << EXP_TABLE_BITS)
 #define Shift __exp_data.exp2_shift
-#define T __exp_data.tab
-#define C1 __exp_data.exp2_poly[0]
-#define C2 __exp_data.exp2_poly[1]
-#define C3 __exp_data.exp2_poly[2]
-#define C4 __exp_data.exp2_poly[3]
-#define C5 __exp_data.exp2_poly[4]
+#define T     __exp_data.tab
+#define C1    __exp_data.exp2_poly[0]
+#define C2    __exp_data.exp2_poly[1]
+#define C3    __exp_data.exp2_poly[2]
+#define C4    __exp_data.exp2_poly[3]
+#define C5    __exp_data.exp2_poly[4]
 
 /* Handle cases that may overflow or underflow when computing the result that
    is scale*(1+TMP) without intermediate rounding.  The bit representation of
@@ -74,7 +74,8 @@ double exp2(double x)
 	double_t kd, r, r2, scale, tail, tmp;
 
 	abstop = top12(x) & 0x7ff;
-	if (predict_false(abstop - top12(0x1p-54) >= top12(512.0) - top12(0x1p-54))) {
+	if (predict_false(abstop - top12(0x1p-54) >=
+			  top12(512.0) - top12(0x1p-54))) {
 		if (abstop - top12(0x1p-54) >= 0x80000000)
 			/* Avoid spurious underflow for tiny x.  */
 			/* Note: 0 is common input.  */

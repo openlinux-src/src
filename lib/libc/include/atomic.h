@@ -3,7 +3,7 @@
 
 #include <stdatomic.h>
 
-#define LIBC_LOCK(__lock) __libc_lock(&__lock)
+#define LIBC_LOCK(__lock)   __libc_lock(&__lock)
 #define LIBC_UNLOCK(__lock) atomic_flag_clear(&__lock)
 
 static __inline void __libc_lock(volatile atomic_flag *lock)

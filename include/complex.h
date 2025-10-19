@@ -1,13 +1,13 @@
 #ifndef __COMPLEX_H
 #define __COMPLEX_H
 
-#define complex _Complex
-#define _Complex_I (__extension__(0.0f + 1.0fi))
-#define imaginary _Imaginary
+#define complex	     _Complex
+#define _Complex_I   (__extension__(0.0f + 1.0fi))
+#define imaginary    _Imaginary
 #define _Imaginary_I (__extension__ 1.0iF)
-#define I _Imaginary_I
+#define I	     _Imaginary_I
 
-#define CMPLX(x, y) ((double)(x) + _Imaginary_I * (double)(y))
+#define CMPLX(x, y)  ((double)(x) + _Imaginary_I * (double)(y))
 #define CMPLXF(x, y) (+(_Complex float){ (float)(x), (float)(y) })
 #define CMPLXL(x, y) (__builtin_complex((long double)(x), (long double)(y)))
 

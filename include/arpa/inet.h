@@ -1,7 +1,7 @@
 #ifndef __ARPA_INET_H
 #define __ARPA_INET_H
 
-#define INET_ADDRSTRLEN 16
+#define INET_ADDRSTRLEN	 16
 #define INET6_ADDRSTRLEN 46
 
 typedef __UINT16_TYPE__ in_port_t;

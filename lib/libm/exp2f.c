@@ -20,9 +20,9 @@ Wrong count: 168353 (all nearest rounding wrong results with fma.)
 Non-nearest ULP error: 1 (rounded ULP error)
 */
 
-#define N (1 << EXP2F_TABLE_BITS)
-#define T __exp2f_data.tab
-#define C __exp2f_data.poly
+#define N     (1 << EXP2F_TABLE_BITS)
+#define T     __exp2f_data.tab
+#define C     __exp2f_data.poly
 #define SHIFT __exp2f_data.shift_scaled
 
 static inline uint32_t top12(float x)

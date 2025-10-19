@@ -26,7 +26,7 @@ typedef union {
 } long_double_complex;
 
 #define M_IVLN10 (4.34294481903251816668e-01)
-#define M_PIL (3.14159265358979323846264338327950280e+00L)
+#define M_PIL	 (3.14159265358979323846264338327950280e+00L)
 
 #define REAL_PART(z) ((z).parts.x)
 #define IMAG_PART(z) ((z).parts.y)
@@ -34,7 +34,7 @@ typedef union {
 static const long double DP1 = 3.14159265358979323829596852490908531763125L;
 static const long double DP2 = 1.6667485837041756656403424829301998703007e-19L;
 
-#define MACHEP 1.1e-16
+#define MACHEP	1.1e-16
 #define MACHEPF 3.0e-8f
 
 #ifndef __vax__

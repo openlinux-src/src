@@ -13,6 +13,7 @@
 
 extern char *dtoa(double, int mode, int ndigits, int *decpt, int *sign,
 		  char **rve);
+extern void freedtoa(char *s);
 
 static int utoa_base(unsigned long long v, char *s, int b, int p, int u)
 {
@@ -56,28 +57,27 @@ int vfprintf(FILE *restrict stream, const char *restrict format, va_list ap)
 			int padding = 0;
 			int precision = -1;
 
-			// Skip the '%'
 			ptr++;
 
 			enum {
 				FLAG_NONE = 0,
-				FLAG_MINUS = 1 << 0, // '-'
-				FLAG_PLUS = 1 << 1, // '+'
-				FLAG_HASH = 1 << 2, // '#'
-				FLAG_ZERO = 1 << 3, // '0'
-				FLAG_SPACE = 1 << 4 // ' '
+				FLAG_MINUS = 1 << 0,
+				FLAG_PLUS = 1 << 1,
+				FLAG_HASH = 1 << 2,
+				FLAG_ZERO = 1 << 3,
+				FLAG_SPACE = 1 << 4
 			} flags = FLAG_NONE;
 
 			enum {
-				LENGTH_NONE, // default (no modifier)
-				LENGTH_HH, // 'hh' -> signed char / unsigned char
-				LENGTH_H, // 'h' -> short / unsigned short
-				LENGTH_L, // 'l' -> long / unsigned long
-				LENGTH_LL, // 'll' -> long long / unsigned long long
-				LENGTH_J, // 'j' -> intmax_t / uintmax_t
-				LENGTH_Z, // 'z' -> size_t
-				LENGTH_T, // 't' -> ptrdiff_t
-				LENGTH_CAPL // 'L' -> long double
+				LENGTH_NONE,
+				LENGTH_HH,
+				LENGTH_H,
+				LENGTH_L,
+				LENGTH_LL,
+				LENGTH_J,
+				LENGTH_Z,
+				LENGTH_T,
+				LENGTH_CAPL
 			} length = LENGTH_NONE;
 
 			while (*ptr == '-' || *ptr == '+' || *ptr == ' ' ||
@@ -197,10 +197,19 @@ int vfprintf(FILE *restrict stream, const char *restrict format, va_list ap)
 					return -1;
 				}
 
-				l = utoa_base(val, buf, 10, precision, 0);
+				unsigned long long uval;
+
+				if (val < 0) {
+					uval = (unsigned long long)(-val);
+					negative = 1;
+				} else {
+					uval = (unsigned long long)val;
+				}
+
+				l = utoa_base(uval, buf, 10, precision, 0);
 
 				s = buf;
-				if (val < 0) {
+				if (negative) {
 					memmove(s + 1, s, l);
 					s[0] = '-';
 					s[++l] = '\0';
@@ -221,56 +230,79 @@ int vfprintf(FILE *restrict stream, const char *restrict format, va_list ap)
 			case 'x':
 			case 'X': {
 				unsigned long long val;
+				char fmt_char = *ptr;
 
 				switch (length) {
 				case LENGTH_NONE:
-					val = va_arg(ap, int);
+					val = va_arg(ap, unsigned int);
 					break;
 				case LENGTH_HH:
-					val = (signed char)va_arg(ap, int);
+					val = (unsigned char)va_arg(
+						ap, unsigned int);
 					break;
 				case LENGTH_H:
-					val = (short)va_arg(ap, int);
+					val = (unsigned short)va_arg(
+						ap, unsigned int);
 					break;
 				case LENGTH_L:
-					val = va_arg(ap, long);
+					val = va_arg(ap, unsigned long);
 					break;
 				case LENGTH_LL:
-					val = va_arg(ap, long long);
+					val = va_arg(ap, unsigned long long);
 					break;
 				case LENGTH_J:
-					val = va_arg(ap, intmax_t);
+					val = va_arg(ap, uintmax_t);
 					break;
 				case LENGTH_Z:
 					val = va_arg(ap, size_t);
 					break;
 				case LENGTH_T:
-					val = va_arg(ap, ptrdiff_t);
+					val = (ptrdiff_t)va_arg(ap, ptrdiff_t);
 					break;
 				case LENGTH_CAPL:
 					errno = EINVAL;
 					return -1;
 				}
 
-				int base = (*ptr == 'o') ? 8 :
-					   (*ptr == 'u') ? 10 :
-							   16;
-				int upper = (*ptr == 'X');
-				l = utoa_base(val, buf, base, precision, upper);
+				if (fmt_char == 'o') {
+					l = utoa_base(val, buf, 8, precision,
+						      0);
+				} else if (fmt_char == 'u') {
+					l = utoa_base(val, buf, 10, precision,
+						      0);
+				} else if (fmt_char == 'x') {
+					l = utoa_base(val, buf, 16, precision,
+						      0);
+				} else if (fmt_char == 'X') {
+					l = utoa_base(val, buf, 16, precision,
+						      1);
+				} else {
+					l = utoa_base(val, buf, 10, precision,
+						      0);
+				}
+
 				s = buf;
 
 				if ((flags & FLAG_HASH) && val != 0) {
-					if (*ptr == 'o') {
+					if (fmt_char == 'o') {
 						memmove(s + 1, s, l);
 						s[0] = '0';
 						s[++l] = '\0';
-					} else if (*ptr == 'x' || *ptr == 'X') {
+					} else if (fmt_char == 'x') {
 						memmove(s + 2, s, l);
 						s[0] = '0';
-						s[1] = upper ? 'X' : 'x';
-						s[(l += 2)] = '\0';
+						s[1] = 'x';
+						l += 2;
+						s[l] = '\0';
+					} else if (fmt_char == 'X') {
+						memmove(s + 2, s, l);
+						s[0] = '0';
+						s[1] = 'X';
+						l += 2;
+						s[l] = '\0';
 					}
 				}
+
 				break;
 			}
 
@@ -280,117 +312,357 @@ int vfprintf(FILE *restrict stream, const char *restrict format, va_list ap)
 			case 'E':
 			case 'g':
 			case 'G': {
-				long double val;
+				double val;
 
 				if (length == LENGTH_CAPL)
-					val = va_arg(ap, long double);
+					val = (double)va_arg(ap, long double);
 				else
 					val = va_arg(ap, double);
-
-				int mode, ndigits;
 
 				if (precision == -1)
 					precision = 6;
 
-				switch (*ptr) {
-				case 'f':
-				case 'F':
-					mode = 3;
-					ndigits = precision;
-					break;
-				case 'e':
-				case 'E':
-					mode = 2;
-					ndigits = precision + 1;
-					break;
-				case 'g':
-				case 'G':
-					mode = 0;
-					ndigits = precision;
-					break;
-				}
-
-				int decpt, sign;
-				char *rve;
-				char *buf_r = dtoa(val, mode, ndigits, &decpt,
-						   &sign, &rve);
-				int mant_len = rve - buf_r;
 				s = buf;
 				int pos = 0;
 
-				if (sign)
+				if (isnan(val)) {
+					strcpy(buf,
+					       (*ptr == 'F' || *ptr == 'E' ||
+						*ptr == 'G') ?
+						       "NAN" :
+						       "nan");
+					l = 3;
+					break;
+				}
+				if (isinf(val)) {
+					if (val < 0) {
+						buf[pos++] = '-';
+					} else if (flags & FLAG_PLUS) {
+						buf[pos++] = '+';
+					} else if (flags & FLAG_SPACE) {
+						buf[pos++] = ' ';
+					}
+					strcpy(buf + pos,
+					       (*ptr == 'F' || *ptr == 'E' ||
+						*ptr == 'G') ?
+						       "INF" :
+						       "inf");
+					l = pos + 3;
+					break;
+				}
+
+				if (val < 0) {
 					buf[pos++] = '-';
-				else if (flags & FLAG_PLUS)
+					val = -val;
+				} else if (flags & FLAG_PLUS) {
 					buf[pos++] = '+';
-				else if (flags & FLAG_SPACE)
+				} else if (flags & FLAG_SPACE) {
 					buf[pos++] = ' ';
+				}
 
-				for (int i = 0; i < mant_len; i++)
-					buf[pos++] = buf_r[i];
+				switch (*ptr) {
+				case 'f':
+				case 'F': {
+					int decpt, sign;
+					char *rve;
+					char *digits = dtoa(val, 3, precision,
+							    &decpt, &sign,
+							    &rve);
 
-				buf[pos] = '\0';
-				free(buf_r);
-				l = strlen(s);
+					if (sign && val != 0.0) {
+						buf[pos++] = '-';
+					}
+
+					if (decpt <= 1 && digits[0] == '0' &&
+					    digits[1] == '\0') {
+						buf[pos++] = '0';
+						if (precision > 0) {
+							buf[pos++] = '.';
+							for (int i = 0;
+							     i < precision;
+							     i++) {
+								buf[pos++] =
+									'0';
+							}
+						}
+					} else if (decpt <= 0) {
+						buf[pos++] = '0';
+						if (precision > 0) {
+							buf[pos++] = '.';
+							for (int i = 0;
+							     i < -decpt &&
+							     i < precision;
+							     i++) {
+								buf[pos++] =
+									'0';
+							}
+							int remaining =
+								precision +
+								decpt;
+							char *d = digits;
+							while (*d &&
+							       remaining-- >
+								       0) {
+								buf[pos++] =
+									*d++;
+							}
+							while (remaining-- >
+							       0) {
+								buf[pos++] =
+									'0';
+							}
+						}
+					} else {
+						char *d = digits;
+						int digits_used = 0;
+						for (int i = 0; i < decpt && *d;
+						     i++) {
+							buf[pos++] = *d++;
+							digits_used++;
+						}
+						while (digits_used < decpt) {
+							buf[pos++] = '0';
+							digits_used++;
+						}
+						if (precision > 0) {
+							buf[pos++] = '.';
+							for (int i = 0;
+							     i < precision;
+							     i++) {
+								if (*d) {
+									buf[pos++] =
+										*d++;
+								} else {
+									buf[pos++] =
+										'0';
+								}
+							}
+						}
+					}
+
+					buf[pos] = '\0';
+					l = pos;
+					freedtoa(digits);
+					break;
+				}
+				case 'e':
+				case 'E': {
+					int decpt, sign;
+					char *rve;
+					char *digits =
+						dtoa(val, 2, precision + 1,
+						     &decpt, &sign, &rve);
+
+					if (sign && val != 0.0) {
+						buf[pos++] = '-';
+					}
+
+					if (*digits) {
+						buf[pos++] = *digits++;
+					} else {
+						buf[pos++] = '0';
+					}
+
+					if (precision > 0) {
+						buf[pos++] = '.';
+						for (int i = 0; i < precision;
+						     i++) {
+							if (*digits) {
+								buf[pos++] =
+									*digits++;
+							} else {
+								buf[pos++] =
+									'0';
+							}
+						}
+					}
+
+					buf[pos++] = (*ptr == 'E') ? 'E' : 'e';
+					int exp = decpt - 1;
+					buf[pos++] = (exp >= 0) ? '+' : '-';
+					if (exp < 0)
+						exp = -exp;
+					if (exp < 10)
+						buf[pos++] = '0';
+					pos += utoa_base(exp, buf + pos, 10, 0,
+							 0);
+
+					buf[pos] = '\0';
+					l = pos;
+					freedtoa(digits);
+					break;
+				}
+				case 'g':
+				case 'G': {
+					int decpt, sign;
+					char *rve;
+					char *digits = dtoa(val, 2, precision,
+							    &decpt, &sign,
+							    &rve);
+
+					if (sign && val != 0.0) {
+						buf[pos++] = '-';
+					}
+
+					int exp = decpt - 1;
+					if (exp < -4 || exp >= precision) {
+						if (*digits) {
+							buf[pos++] = *digits++;
+						}
+						if (*digits) {
+							buf[pos++] = '.';
+							while (*digits) {
+								buf[pos++] =
+									*digits++;
+							}
+						}
+						buf[pos++] = (*ptr == 'G') ?
+								     'E' :
+								     'e';
+						buf[pos++] = (exp >= 0) ? '+' :
+									  '-';
+						if (exp < 0)
+							exp = -exp;
+						if (exp < 10)
+							buf[pos++] = '0';
+						pos += utoa_base(exp, buf + pos,
+								 10, 0, 0);
+					} else {
+						if (decpt <= 0) {
+							buf[pos++] = '0';
+							if (*digits &&
+							    *digits != '0') {
+								buf[pos++] =
+									'.';
+								for (int i = 0;
+								     i < -decpt;
+								     i++) {
+									buf[pos++] =
+										'0';
+								}
+								char *d =
+									digits;
+								while (*d &&
+								       *d != '0') {
+									buf[pos++] =
+										*d++;
+								}
+							}
+						} else {
+							char *d = digits;
+							for (int i = 0;
+							     i < decpt && *d;
+							     i++) {
+								buf[pos++] =
+									*d++;
+							}
+							if (*d) {
+								buf[pos++] =
+									'.';
+								while (*d) {
+									buf[pos++] =
+										*d++;
+								}
+							}
+						}
+					}
+
+					while (pos > 1 && buf[pos - 1] == '0' &&
+					       pos > 2 && buf[pos - 2] != 'e' &&
+					       buf[pos - 2] != 'E') {
+						pos--;
+					}
+					if (pos > 1 && buf[pos - 1] == '.') {
+						pos--;
+					}
+
+					buf[pos] = '\0';
+					l = pos;
+					freedtoa(digits);
+					break;
+				}
+				}
 
 				break;
 			}
 
 			case 'a':
 			case 'A': {
-				long double val;
+				double val;
 
 				if (length == LENGTH_CAPL)
-					val = va_arg(ap, long double);
+					val = (double)va_arg(ap, long double);
 				else
 					val = va_arg(ap, double);
 
 				int upper = (*ptr == 'A');
+				int pos = 0;
+
+				if (val < 0) {
+					buf[pos++] = '-';
+					val = -val;
+				} else if (flags & FLAG_PLUS) {
+					buf[pos++] = '+';
+				} else if (flags & FLAG_SPACE) {
+					buf[pos++] = ' ';
+				}
 
 				if (val == 0.0) {
-					char zero_buf[6];
-					int pos = 0;
-					if (val < 0)
-						zero_buf[pos++] = '-';
-					else if (flags & FLAG_PLUS)
-						zero_buf[pos++] = '+';
-					else if (flags & FLAG_SPACE)
-						zero_buf[pos++] = ' ';
-					zero_buf[pos++] = '0';
-					zero_buf[pos++] = 'x';
-					zero_buf[pos++] = '0';
-					zero_buf[pos++] = upper ? 'P' : 'p';
-					zero_buf[pos++] = '0';
-					zero_buf[pos] = '\0';
-					s = zero_buf;
-					l = pos;
+					strcpy(buf + pos,
+					       upper ? "0X0P+0" : "0x0p+0");
+					l = pos + 6;
 					break;
 				}
 
 				int exp;
-				double abs_val = (val < 0) ? -val : val;
-				double mant = frexp(abs_val, &exp);
-
-				unsigned long long hm =
-					(unsigned long long)(mant *
-							     (1ULL << 53));
-
-				int pos = 0;
-				if (val < 0)
-					buf[pos++] = '-';
-				else if (flags & FLAG_PLUS)
-					buf[pos++] = '+';
-				else if (flags & FLAG_SPACE)
-					buf[pos++] = ' ';
+				double mant = frexp(val, &exp);
+				mant *= 2.0;
+				exp--;
 
 				buf[pos++] = '0';
 				buf[pos++] = upper ? 'X' : 'x';
+				buf[pos++] = '1';
 
-				pos += utoa_base(hm, buf + pos, 16,
-						 precision > 0 ? precision : 0,
-						 upper);
+				if (precision == -1) {
+					precision = 13;
+				}
+
+				if (precision > 0) {
+					buf[pos++] = '.';
+					mant -= 1.0;
+					for (int i = 0; i < precision; i++) {
+						mant *= 16.0;
+						int digit = (int)mant;
+						if (digit > 15)
+							digit = 15;
+						buf[pos++] =
+							(digit < 10) ?
+								('0' + digit) :
+								(upper ? ('A' +
+									  digit -
+									  10) :
+									 ('a' +
+									  digit -
+									  10));
+						mant -= digit;
+					}
+
+					while (pos > 0 && buf[pos - 1] == '0') {
+						pos--;
+					}
+					if (pos > 0 && buf[pos - 1] == '.') {
+						pos--;
+					}
+				}
 
 				buf[pos++] = upper ? 'P' : 'p';
-				pos += utoa_base(exp - 53, buf + pos, 10, 0, 0);
+				if (exp >= 0) {
+					buf[pos++] = '+';
+				} else {
+					buf[pos++] = '-';
+					exp = -exp;
+				}
+				pos += utoa_base(exp, buf + pos, 10, 0, 0);
 
 				buf[pos] = '\0';
 				s = buf;
@@ -403,10 +675,6 @@ int vfprintf(FILE *restrict stream, const char *restrict format, va_list ap)
 				/* fallthrough */
 			case 'c': {
 				if (length == LENGTH_L) {
-					wint_t wc = va_arg(ap, wint_t);
-					int n = wcrtomb(buf, wc, NULL);
-					s = buf;
-					l = n;
 				} else {
 					char c = (char)va_arg(ap, int);
 					buf[0] = c;
@@ -422,10 +690,6 @@ int vfprintf(FILE *restrict stream, const char *restrict format, va_list ap)
 				/* fallthrough */
 			case 's':
 				if (length == LENGTH_L) {
-					wchar_t *wstr = va_arg(ap, wchar_t *);
-					char buf[1024];
-					l = wcstombs(buf, wstr, sizeof(buf));
-					s = buf;
 				} else {
 					s = va_arg(ap, char *);
 					l = strlen(s);
@@ -473,22 +737,56 @@ int vfprintf(FILE *restrict stream, const char *restrict format, va_list ap)
 				padding = width - l;
 			}
 
+			char format_char = *(ptr - 1);
 			char pad_char = ' ';
 			if ((flags & FLAG_ZERO) && !(flags & FLAG_MINUS) &&
-			    (*ptr == 'd' || *ptr == 'i' || *ptr == 'u' ||
-			     *ptr == 'o' || *ptr == 'x' || *ptr == 'X') &&
+			    (format_char == 'd' || format_char == 'i' ||
+			     format_char == 'u' || format_char == 'o' ||
+			     format_char == 'x' || format_char == 'X' ||
+			     format_char == 'f' || format_char == 'F' ||
+			     format_char == 'e' || format_char == 'E' ||
+			     format_char == 'g' || format_char == 'G') &&
 			    precision < 0) {
 				pad_char = '0';
 			}
 
 			if ((flags & FLAG_MINUS) == 0) {
-				for (int i = 0; i < padding; i++) {
-					if (pad_char == '0') {
-						fwrite("0", 1, 1, stream);
-					} else {
-						fwrite(" ", 1, 1, stream);
+				if (pad_char == '0' && s != NULL) {
+					int prefix_len = 0;
+
+					if (s[0] == '-' || s[0] == '+' ||
+					    s[0] == ' ') {
+						fwrite(s, 1, 1, stream);
+						total_printed++;
+						s++;
+						l--;
+						prefix_len++;
 					}
-					total_printed++;
+
+					if (l >= 2 && s[0] == '0' &&
+					    (s[1] == 'x' || s[1] == 'X')) {
+						fwrite(s, 1, 2, stream);
+						total_printed += 2;
+						s += 2;
+						l -= 2;
+						prefix_len += 2;
+					}
+
+					for (int i = 0; i < padding; i++) {
+						fwrite("0", 1, 1, stream);
+						total_printed++;
+					}
+				} else {
+					for (int i = 0; i < padding; i++) {
+						if (pad_char == '0') {
+							fwrite("0", 1, 1,
+							       stream);
+						} else {
+							fwrite(" ", 1, 1,
+							       stream);
+						}
+						total_printed++;
+					}
 				}
 			}
 

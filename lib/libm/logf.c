@@ -18,10 +18,10 @@ ULP error: 0.818 (nearest rounding.)
 Relative error: 1.957 * 2^-26 (before rounding.)
 */
 
-#define T __logf_data.tab
-#define A __logf_data.poly
+#define T   __logf_data.tab
+#define A   __logf_data.poly
 #define Ln2 __logf_data.ln2
-#define N (1 << LOGF_TABLE_BITS)
+#define N   (1 << LOGF_TABLE_BITS)
 #define OFF 0x3f330000
 
 float logf(float x)

@@ -25,7 +25,6 @@
  * SUCH DAMAGE.
  */
 
-
 #include "libm.h"
 #if LDBL_MANT_DIG == 53 && LDBL_MAX_EXP == 1024
 long double fmal(long double x, long double y, long double z)
@@ -36,10 +35,10 @@ long double fmal(long double x, long double y, long double z)
 #include <fenv.h>
 #if LDBL_MANT_DIG == 64
 #define LASTBIT(u) (u.i.m & 1)
-#define SPLIT (0x1p32L + 1)
+#define SPLIT	   (0x1p32L + 1)
 #elif LDBL_MANT_DIG == 113
 #define LASTBIT(u) (u.i.lo & 1)
-#define SPLIT (0x1p57L + 1)
+#define SPLIT	   (0x1p57L + 1)
 #endif
 
 /*
@@ -98,7 +97,8 @@ static inline long double add_adjusted(long double a, long double b)
  * that the result will be subnormal, and care is taken to ensure that
  * double rounding does not occur.
  */
-static inline long double add_and_denormalize(long double a, long double b, int scale)
+static inline long double add_and_denormalize(long double a, long double b,
+					      int scale)
 {
 	struct dd sum;
 	int bits_lost;
@@ -164,7 +164,7 @@ static inline struct dd dd_mul(long double a, long double b)
  */
 long double fmal(long double x, long double y, long double z)
 {
-	#pragma STDC FENV_ACCESS ON
+#pragma STDC FENV_ACCESS ON
 	long double xs, ys, zs, adj;
 	struct dd xy, r;
 	int oround;

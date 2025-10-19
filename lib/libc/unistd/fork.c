@@ -2,5 +2,5 @@
 
 pid_t fork(void)
 {
-    return _Fork();
+	return _Fork();
 }

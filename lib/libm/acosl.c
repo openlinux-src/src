@@ -31,7 +31,7 @@ long double acosl(long double x)
 
 long double acosl(long double x)
 {
-	union ldshape u = {x};
+	union ldshape u = { x };
 	long double z, s, c, f;
 	uint16_t e = u.i.se & 0x7fff;
 
@@ -40,28 +40,28 @@ long double acosl(long double x)
 		if (x == 1)
 			return 0;
 		if (x == -1)
-			return 2*pio2_hi + 0x1p-120f;
-		return 0/(x-x);
+			return 2 * pio2_hi + 0x1p-120f;
+		return 0 / (x - x);
 	}
 	/* |x| < 0.5 */
 	if (e < 0x3fff - 1) {
 		if (e < 0x3fff - LDBL_MANT_DIG - 1)
 			return pio2_hi + 0x1p-120f;
-		return pio2_hi - (__invtrigl_R(x*x)*x - pio2_lo + x);
+		return pio2_hi - (__invtrigl_R(x * x) * x - pio2_lo + x);
 	}
 	/* x < -0.5 */
 	if (u.i.se >> 15) {
-		z = (1 + x)*0.5;
+		z = (1 + x) * 0.5;
 		s = sqrtl(z);
-		return 2*(pio2_hi - (__invtrigl_R(z)*s - pio2_lo + s));
+		return 2 * (pio2_hi - (__invtrigl_R(z) * s - pio2_lo + s));
 	}
 	/* x > 0.5 */
-	z = (1 - x)*0.5;
+	z = (1 - x) * 0.5;
 	s = sqrtl(z);
 	u.f = s;
 	CLEARBOTTOM(u);
 	f = u.f;
-	c = (z - f*f)/(s + f);
-	return 2*(__invtrigl_R(z)*s + c + f);
+	c = (z - f * f) / (s + f);
+	return 2 * (__invtrigl_R(z) * s + c + f);
 }
 #endif

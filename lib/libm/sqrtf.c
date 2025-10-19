@@ -7,7 +7,7 @@
 
 static inline uint32_t mul32(uint32_t a, uint32_t b)
 {
-	return (uint64_t)a*b >> 32;
+	return (uint64_t)a * b >> 32;
 }
 
 /* see sqrt.c for more detailed comments.  */
@@ -59,13 +59,13 @@ float sqrtf(float x)
 	u = three - d;
 	s = mul32(s, u);
 	/* -0x1.03p-28 < s/sqrt(m) - 1 < 0x1.fp-31 */
-	s = (s - 1)>>6;
+	s = (s - 1) >> 6;
 	/* s < sqrt(m) < s + 0x1.08p-23 */
 
 	/* compute nearest rounded result.  */
 	uint32_t d0, d1, d2;
 	float y, t;
-	d0 = (m << 16) - s*s;
+	d0 = (m << 16) - s * s;
 	d1 = s - d0;
 	d2 = d1 + s + 1;
 	s += d1 >> 31;
@@ -74,8 +74,8 @@ float sqrtf(float x)
 	y = asfloat(s);
 	if (FENV_SUPPORT) {
 		/* handle rounding and inexact exception. */
-		uint32_t tiny = predict_false(d2==0) ? 0 : 0x01000000;
-		tiny |= (d1^d2) & 0x80000000;
+		uint32_t tiny = predict_false(d2 == 0) ? 0 : 0x01000000;
+		tiny |= (d1 ^ d2) & 0x80000000;
 		t = asfloat(tiny);
 		y = eval_as_float(y + t);
 	}

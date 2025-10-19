@@ -10,16 +10,16 @@
 #include "libm.h"
 #include "exp_data.h"
 
-#define N (1 << EXP_TABLE_BITS)
-#define InvLn2N __exp_data.invln2N
+#define N	  (1 << EXP_TABLE_BITS)
+#define InvLn2N	  __exp_data.invln2N
 #define NegLn2hiN __exp_data.negln2hiN
 #define NegLn2loN __exp_data.negln2loN
-#define Shift __exp_data.shift
-#define T __exp_data.tab
-#define C2 __exp_data.poly[5 - EXP_POLY_ORDER]
-#define C3 __exp_data.poly[6 - EXP_POLY_ORDER]
-#define C4 __exp_data.poly[7 - EXP_POLY_ORDER]
-#define C5 __exp_data.poly[8 - EXP_POLY_ORDER]
+#define Shift	  __exp_data.shift
+#define T	  __exp_data.tab
+#define C2	  __exp_data.poly[5 - EXP_POLY_ORDER]
+#define C3	  __exp_data.poly[6 - EXP_POLY_ORDER]
+#define C4	  __exp_data.poly[7 - EXP_POLY_ORDER]
+#define C5	  __exp_data.poly[8 - EXP_POLY_ORDER]
 
 /* Handle cases that may overflow or underflow when computing the result that
    is scale*(1+TMP) without intermediate rounding.  The bit representation of
@@ -76,7 +76,8 @@ double exp(double x)
 	double_t kd, z, r, r2, scale, tail, tmp;
 
 	abstop = top12(x) & 0x7ff;
-	if (predict_false(abstop - top12(0x1p-54) >= top12(512.0) - top12(0x1p-54))) {
+	if (predict_false(abstop - top12(0x1p-54) >=
+			  top12(512.0) - top12(0x1p-54))) {
 		if (abstop - top12(0x1p-54) >= 0x80000000)
 			/* Avoid spurious underflow for tiny x.  */
 			/* Note: 0 is common input.  */

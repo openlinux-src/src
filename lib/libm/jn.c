@@ -36,7 +36,8 @@
 
 #include "libm.h"
 
-static const double invsqrtpi = 5.64189583547756279280e-01; /* 0x3FE20DD7, 0x50429B6D */
+static const double invsqrtpi =
+	5.64189583547756279280e-01; /* 0x3FE20DD7, 0x50429B6D */
 
 double jn(int n, double x)
 {
@@ -45,10 +46,10 @@ double jn(int n, double x)
 	double a, b, temp;
 
 	EXTRACT_WORDS(ix, lx, x);
-	sign = ix>>31;
+	sign = ix >> 31;
 	ix &= 0x7fffffff;
 
-	if ((ix | (lx|-lx)>>31) > 0x7ff00000) /* nan */
+	if ((ix | (lx | -lx) >> 31) > 0x7ff00000) /* nan */
 		return x;
 
 	/* J(-n,x) = (-1)^n * J(n, x), J(n, -x) = (-1)^n * J(n, x)
@@ -58,17 +59,17 @@ double jn(int n, double x)
 	if (n == 0)
 		return j0(x);
 	if (n < 0) {
-		nm1 = -(n+1);
+		nm1 = -(n + 1);
 		x = -x;
 		sign ^= 1;
 	} else
-		nm1 = n-1;
+		nm1 = n - 1;
 	if (nm1 == 0)
 		return j1(x);
 
-	sign &= n;  /* even n: 0, odd n: signbit(x) */
+	sign &= n; /* even n: 0, odd n: signbit(x) */
 	x = fabs(x);
-	if ((ix|lx) == 0 || ix == 0x7ff00000)  /* if x is 0 or inf */
+	if ((ix | lx) == 0 || ix == 0x7ff00000) /* if x is 0 or inf */
 		b = 0.0;
 	else if (nm1 < x) {
 		/* Safe to use J(n+1,x)=2n/x *J(n,x)-J(n-1,x) */
@@ -86,21 +87,29 @@ double jn(int n, double x)
 			 *             2    -s+c            -c-s
 			 *             3     s+c             c-s
 			 */
-			switch(nm1&3) {
-			case 0: temp = -cos(x)+sin(x); break;
-			case 1: temp = -cos(x)-sin(x); break;
-			case 2: temp =  cos(x)-sin(x); break;
+			switch (nm1 & 3) {
+			case 0:
+				temp = -cos(x) + sin(x);
+				break;
+			case 1:
+				temp = -cos(x) - sin(x);
+				break;
+			case 2:
+				temp = cos(x) - sin(x);
+				break;
 			default:
-			case 3: temp =  cos(x)+sin(x); break;
+			case 3:
+				temp = cos(x) + sin(x);
+				break;
 			}
-			b = invsqrtpi*temp/sqrt(x);
+			b = invsqrtpi * temp / sqrt(x);
 		} else {
 			a = j0(x);
 			b = j1(x);
-			for (i=0; i<nm1; ) {
+			for (i = 0; i < nm1;) {
 				i++;
 				temp = b;
-				b = b*(2.0*i/x) - a; /* avoid underflow */
+				b = b * (2.0 * i / x) - a; /* avoid underflow */
 				a = temp;
 			}
 		}
@@ -109,17 +118,17 @@ double jn(int n, double x)
 			/* x is tiny, return the first Taylor expansion of J(n,x)
 			 * J(n,x) = 1/n!*(x/2)^n  - ...
 			 */
-			if (nm1 > 32)  /* underflow */
+			if (nm1 > 32) /* underflow */
 				b = 0.0;
 			else {
-				temp = x*0.5;
+				temp = x * 0.5;
 				b = temp;
 				a = 1.0;
-				for (i=2; i<=nm1+1; i++) {
+				for (i = 2; i <= nm1 + 1; i++) {
 					a *= (double)i; /* a = n! */
-					b *= temp;      /* b = (x/2)^n */
+					b *= temp; /* b = (x/2)^n */
 				}
-				b = b/a;
+				b = b / a;
 			}
 		} else {
 			/* use backward recurrence */
@@ -151,25 +160,25 @@ double jn(int n, double x)
 			 * When Q(k) > 1e17     good for quadruple
 			 */
 			/* determine k */
-			double t,q0,q1,w,h,z,tmp,nf;
+			double t, q0, q1, w, h, z, tmp, nf;
 			int k;
 
 			nf = nm1 + 1.0;
-			w = 2*nf/x;
-			h = 2/x;
-			z = w+h;
+			w = 2 * nf / x;
+			h = 2 / x;
+			z = w + h;
 			q0 = w;
-			q1 = w*z - 1.0;
+			q1 = w * z - 1.0;
 			k = 1;
 			while (q1 < 1.0e9) {
 				k += 1;
 				z += h;
-				tmp = z*q1 - q0;
+				tmp = z * q1 - q0;
 				q0 = q1;
 				q1 = tmp;
 			}
-			for (t=0.0, i=k; i>=0; i--)
-				t = 1/(2*(i+nf)/x - t);
+			for (t = 0.0, i = k; i >= 0; i--)
+				t = 1 / (2 * (i + nf) / x - t);
 			a = t;
 			b = 1.0;
 			/*  estimate log((2/x)^n*n!) = n*log(2/x)+n*ln(n)
@@ -180,37 +189,36 @@ double jn(int n, double x)
 			 *  then recurrent value may overflow and the result is
 			 *  likely underflow to zero
 			 */
-			tmp = nf*log(fabs(w));
+			tmp = nf * log(fabs(w));
 			if (tmp < 7.09782712893383973096e+02) {
-				for (i=nm1; i>0; i--) {
+				for (i = nm1; i > 0; i--) {
 					temp = b;
-					b = b*(2.0*i)/x - a;
+					b = b * (2.0 * i) / x - a;
 					a = temp;
 				}
 			} else {
-				for (i=nm1; i>0; i--) {
+				for (i = nm1; i > 0; i--) {
 					temp = b;
-					b = b*(2.0*i)/x - a;
+					b = b * (2.0 * i) / x - a;
 					a = temp;
 					/* scale b to avoid spurious overflow */
 					if (b > 0x1p500) {
 						a /= b;
 						t /= b;
-						b  = 1.0;
+						b = 1.0;
 					}
 				}
 			}
 			z = j0(x);
 			w = j1(x);
 			if (fabs(z) >= fabs(w))
-				b = t*z/b;
+				b = t * z / b;
 			else
-				b = t*w/a;
+				b = t * w / a;
 		}
 	}
 	return sign ? -b : b;
 }
-
 
 double yn(int n, double x)
 {
@@ -219,23 +227,23 @@ double yn(int n, double x)
 	double a, b, temp;
 
 	EXTRACT_WORDS(ix, lx, x);
-	sign = ix>>31;
+	sign = ix >> 31;
 	ix &= 0x7fffffff;
 
-	if ((ix | (lx|-lx)>>31) > 0x7ff00000) /* nan */
+	if ((ix | (lx | -lx) >> 31) > 0x7ff00000) /* nan */
 		return x;
-	if (sign && (ix|lx)!=0) /* x < 0 */
-		return 0/0.0;
+	if (sign && (ix | lx) != 0) /* x < 0 */
+		return 0 / 0.0;
 	if (ix == 0x7ff00000)
 		return 0.0;
 
 	if (n == 0)
 		return y0(x);
 	if (n < 0) {
-		nm1 = -(n+1);
-		sign = n&1;
+		nm1 = -(n + 1);
+		sign = n & 1;
 	} else {
-		nm1 = n-1;
+		nm1 = n - 1;
 		sign = 0;
 	}
 	if (nm1 == 0)
@@ -255,23 +263,31 @@ double yn(int n, double x)
 		 *             2    -s+c            -c-s
 		 *             3     s+c             c-s
 		 */
-		switch(nm1&3) {
-		case 0: temp = -sin(x)-cos(x); break;
-		case 1: temp = -sin(x)+cos(x); break;
-		case 2: temp =  sin(x)+cos(x); break;
+		switch (nm1 & 3) {
+		case 0:
+			temp = -sin(x) - cos(x);
+			break;
+		case 1:
+			temp = -sin(x) + cos(x);
+			break;
+		case 2:
+			temp = sin(x) + cos(x);
+			break;
 		default:
-		case 3: temp =  sin(x)-cos(x); break;
+		case 3:
+			temp = sin(x) - cos(x);
+			break;
 		}
-		b = invsqrtpi*temp/sqrt(x);
+		b = invsqrtpi * temp / sqrt(x);
 	} else {
 		a = y0(x);
 		b = y1(x);
 		/* quit if b is -inf */
 		GET_HIGH_WORD(ib, b);
-		for (i=0; i<nm1 && ib!=0xfff00000; ){
+		for (i = 0; i < nm1 && ib != 0xfff00000;) {
 			i++;
 			temp = b;
-			b = (2.0*i/x)*b - a;
+			b = (2.0 * i / x) * b - a;
 			GET_HIGH_WORD(ib, b);
 			a = temp;
 		}

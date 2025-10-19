@@ -8,7 +8,10 @@ double nexttoward(double x, long double y)
 #else
 double nexttoward(double x, long double y)
 {
-	union {double f; uint64_t i;} ux = {x};
+	union {
+		double f;
+		uint64_t i;
+	} ux = { x };
 	int e;
 
 	if (isnan(x) || isnan(y))
@@ -18,7 +21,7 @@ double nexttoward(double x, long double y)
 	if (x == 0) {
 		ux.i = 1;
 		if (signbit(y))
-			ux.i |= 1ULL<<63;
+			ux.i |= 1ULL << 63;
 	} else if (x < y) {
 		if (signbit(x))
 			ux.i--;
@@ -30,13 +33,13 @@ double nexttoward(double x, long double y)
 		else
 			ux.i--;
 	}
-	e = ux.i>>52 & 0x7ff;
+	e = ux.i >> 52 & 0x7ff;
 	/* raise overflow if ux.f is infinite and x is finite */
 	if (e == 0x7ff)
-		FORCE_EVAL(x+x);
+		FORCE_EVAL(x + x);
 	/* raise underflow if ux.f is subnormal or zero */
 	if (e == 0)
-		FORCE_EVAL(x*x + ux.f*ux.f);
+		FORCE_EVAL(x * x + ux.f * ux.f);
 	return ux.f;
 }
 #endif

@@ -2,6 +2,6 @@
 
 void _exit(int status)
 {
-    __syscall(exit, status);
-    __builtin_unreachable();
+	__syscall(exit, status);
+	__builtin_unreachable();
 }

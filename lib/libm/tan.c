@@ -54,7 +54,8 @@ double tan(double x)
 	if (ix <= 0x3fe921fb) {
 		if (ix < 0x3e400000) { /* |x| < 2**-27 */
 			/* raise inexact if x!=0 and underflow if subnormal */
-			FORCE_EVAL(ix < 0x00100000 ? x/0x1p120f : x+0x1p120f);
+			FORCE_EVAL(ix < 0x00100000 ? x / 0x1p120f :
+						     x + 0x1p120f);
 			return x;
 		}
 		return __tan(x, 0.0, 0);
@@ -66,5 +67,5 @@ double tan(double x)
 
 	/* argument reduction */
 	n = __rem_pio2(x, y);
-	return __tan(y[0], y[1], n&1);
+	return __tan(y[0], y[1], n & 1);
 }

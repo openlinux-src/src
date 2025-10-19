@@ -6,12 +6,12 @@
 #endif
 
 #define CLOCKS_PER_SEC 1000000L
-#define TIME_UTC 1
+#define TIME_UTC       1
 
-#define CLOCK_REALTIME 0
-#define CLOCK_MONOTONIC 1
+#define CLOCK_REALTIME		 0
+#define CLOCK_MONOTONIC		 1
 #define CLOCK_PROCESS_CPUTIME_ID 2
-#define CLOCK_THREAD_CPUTIME_ID 3
+#define CLOCK_THREAD_CPUTIME_ID	 3
 
 #define TIMER_ABSTIME 0x01
 

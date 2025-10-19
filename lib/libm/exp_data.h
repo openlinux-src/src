@@ -9,10 +9,10 @@
 
 #define hidden __attribute__((visibility("hidden")))
 
-#define EXP_TABLE_BITS 7
-#define EXP_POLY_ORDER 5
+#define EXP_TABLE_BITS	     7
+#define EXP_POLY_ORDER	     5
 #define EXP_USE_TOINT_NARROW 0
-#define EXP2_POLY_ORDER 5
+#define EXP2_POLY_ORDER	     5
 extern hidden const struct exp_data {
 	double invln2N;
 	double shift;

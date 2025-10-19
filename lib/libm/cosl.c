@@ -1,13 +1,14 @@
 #include "libm.h"
 
 #if LDBL_MANT_DIG == 53 && LDBL_MAX_EXP == 1024
-long double cosl(long double x) {
+long double cosl(long double x)
+{
 	return cos(x);
 }
 #elif (LDBL_MANT_DIG == 64 || LDBL_MANT_DIG == 113) && LDBL_MAX_EXP == 16384
 long double cosl(long double x)
 {
-	union ldshape u = {x};
+	union ldshape u = { x };
 	unsigned n;
 	long double y[2], hi, lo;
 

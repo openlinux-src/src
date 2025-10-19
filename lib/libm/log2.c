@@ -10,14 +10,14 @@
 #include "libm.h"
 #include "log2_data.h"
 
-#define T __log2_data.tab
-#define T2 __log2_data.tab2
-#define B __log2_data.poly1
-#define A __log2_data.poly
+#define T	 __log2_data.tab
+#define T2	 __log2_data.tab2
+#define B	 __log2_data.poly1
+#define A	 __log2_data.poly
 #define InvLn2hi __log2_data.invln2hi
 #define InvLn2lo __log2_data.invln2lo
-#define N (1 << LOG2_TABLE_BITS)
-#define OFF 0x3fe6000000000000
+#define N	 (1 << LOG2_TABLE_BITS)
+#define OFF	 0x3fe6000000000000
 
 /* Top 16 bits of a double.  */
 static inline uint32_t top16(double x)

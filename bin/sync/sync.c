@@ -2,6 +2,6 @@
 
 int main(void)
 {
-    sync();
-    return 0;
+	sync();
+	return 0;
 }

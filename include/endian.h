@@ -1,9 +1,9 @@
 #ifndef __ENDIAN_H
 #define __ENDIAN_H
 
-#define BYTE_ORDER __BYTE_ORDER__
+#define BYTE_ORDER    __BYTE_ORDER__
 #define LITTLE_ENDIAN __ORDER_LITTLE_ENDIAN__
-#define BIG_ENDIAN __ORDER_BIG_ENDIAN__
+#define BIG_ENDIAN    __ORDER_BIG_ENDIAN__
 
 typedef __UINT16_TYPE__ uint16_t;
 typedef __UINT32_TYPE__ uint32_t;
