@@ -1,3 +1,0 @@
-[submodule "sys"]
-	path = sys
-	url = git@github.com:torvalds/linux
