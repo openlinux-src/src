@@ -1,12 +1,12 @@
 #ifndef __SYS_TIME_H
 #define __SYS_TIME_H
 
-typedef __INT64_TYPE__ time_t;
-typedef __INT64_TYPE__ suseconds_t;
+#define __BITS_SELECT_H_
+#include <bits/select.h>
+#undef __BITS_SELECT_H_
 
-struct timeval {
-	time_t tv_sec;
-	suseconds_t tv_usec;
-};
+int select(int, fd_set *restrict, fd_set *restrict, fd_set *restrict,
+	   struct timeval *restrict);
+int utimes(const char *, const struct timeval[2]);
 
 #endif

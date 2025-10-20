@@ -28,6 +28,8 @@ build: build/$(ARCH)/sysroot/usr/include
 format:
 	find . -name "*.c" -o -name "*.h" | grep -v build | grep -v sys | xargs -r clang-format -i
 
+tests:
+	sh ./tools/test.sh
 
 clean:
 	for lib in $(LIBS); do \
@@ -36,4 +38,4 @@ clean:
 	$(MAKE) -C bin clean
 	rm -rf build
 
-.PHONY: all build pack format clean
+.PHONY: all build tests pack format clean

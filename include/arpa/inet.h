@@ -1,19 +1,17 @@
 #ifndef __ARPA_INET_H
 #define __ARPA_INET_H
 
+#define __BITS_IN_ADDR_H_
+#include <bits/in_addr.h>
+#undef __BITS_IN_ADDR_H_
+
 #define INET_ADDRSTRLEN	 16
 #define INET6_ADDRSTRLEN 46
 
 typedef __UINT16_TYPE__ in_port_t;
-typedef __UINT32_TYPE__ in_addr_t;
 typedef __UINT32_TYPE__ uint32_t;
 typedef __UINT16_TYPE__ uint16_t;
-
 typedef unsigned socklen_t;
-
-struct in_addr {
-	in_addr_t s_addr;
-};
 
 uint32_t htonl(uint32_t);
 uint16_t htons(uint16_t);

@@ -1,4 +1,4 @@
-#include <select.h>
+#include <sys/select.h>
 #include <syscall.h>
 
 int select(int nfds, fd_set *restrict readfds, fd_set *restrict writefds,

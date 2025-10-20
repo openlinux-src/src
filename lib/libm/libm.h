@@ -2,7 +2,6 @@
 #define _LIBM_H
 
 #include <asm/fpmath.h>
-#include <bits/float.h>
 #include <float.h>
 #include <math.h>
 #include <stdint.h>

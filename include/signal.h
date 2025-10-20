@@ -1,7 +1,13 @@
 #ifndef __SIGNAL_H
 #define __SIGNAL_H
 
+#define __BITS_SIGNAL_H_
 #include <bits/signal.h>
+#undef __BITS_SIGNAL_H_
+
+#define __BITS_SIGEVENT_H_
+#include <bits/sigevent.h>
+#undef __BITS_SIGEVENT_H_
 
 #define SIG_DFL ((void (*)(int))0)
 #define SIG_ERR ((void (*)(int)) - 1)
@@ -74,18 +80,6 @@ typedef __SIZE_TYPE__ size_t;
 typedef struct __thread_self pthread_t;
 
 struct timespec;
-
-union sigval {
-	int sival_int;
-	void *sival_ptr;
-};
-
-struct sigevent {
-	int sigev_notify;
-	int sigev_signo;
-	union sigval sigev_value;
-	void (*sigev_notify_function)(union sigval);
-};
 
 typedef struct {
 	int si_signo;

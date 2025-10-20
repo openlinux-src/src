@@ -1,7 +1,21 @@
 openlinux
 =========
 
-A lightweight Linux distribution for x86_64 and aarch64 processor architectures.  
+A lightweight Linux distribution for x86_64 and aarch64 processor architectures.
 
-Copyright (c) 2025 Kacper Fiedorowicz  
+Copyright (c) 2025 Kacper Fiedorowicz
 All rights reserved. See LICENSE for more details.
+
+Special Thanks
+==============
+
+This project draws inspiration from the following excellent projects:
+
+- Google Bionic libc
+- musl libc
+- GNU glibc
+- uClibc-ng
+- NetBSD
+- OpenBSD
+- Newlib
+- Clang and GCC source codes

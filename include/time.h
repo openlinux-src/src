@@ -1,6 +1,14 @@
 #ifndef __TIME_H
 #define __TIME_H
 
+#define __BITS_TIMESPEC_H_
+#include <bits/timespec.h>
+#undef __BITS_TIMESPEC_H_
+
+#define __BITS_SIGEVENT_H_
+#include <bits/sigevent.h>
+#undef __BITS_SIGEVENT_H_
+
 #ifndef NULL
 #define NULL ((void *)0)
 #endif
@@ -15,21 +23,17 @@
 
 #define TIMER_ABSTIME 0x01
 
-typedef __INT64_TYPE__ time_t;
 typedef __INT32_TYPE__ clockid_t;
 typedef __INT64_TYPE__ clock_t;
 typedef __SIZE_TYPE__ size_t;
 typedef __INT32_TYPE__ clockid_t;
 typedef __INT64_TYPE__ pid_t;
+typedef void *timer_t;
+typedef struct __locale_t *locale_t;
 
 extern int daylight;
 extern long timezone;
 extern char *tzname[];
-
-struct timespec {
-	time_t tv_sec;
-	long tv_nsec;
-};
 
 struct tm {
 	int tm_sec;
@@ -43,6 +47,11 @@ struct tm {
 	int tm_isdst;
 	long tm_gmtoff;
 	const char *tm_zone;
+};
+
+struct itimerspec {
+	struct timespec it_interval;
+	struct timespec it_value;
 };
 
 char *asctime(const struct tm *);
@@ -63,18 +72,16 @@ time_t mktime(struct tm *);
 int nanosleep(const struct timespec *, struct timespec *);
 size_t strftime(char *restrict, size_t, const char *restrict,
 		const struct tm *restrict);
-// TODO:
-// size_t strftime_l(char *restrict, size_t, const char *restrict,
-// 		  const struct tm *restrict, locale_t);
+size_t strftime_l(char *restrict, size_t, const char *restrict,
+		  const struct tm *restrict, locale_t);
 char *strptime(const char *restrict, const char *restrict, struct tm *restrict);
 time_t time(time_t *);
-// TODO:
-// int timer_create(clockid_t, struct sigevent *restrict, timer_t *restrict);
-// int timer_delete(timer_t);
-// int timer_getoverrun(timer_t);
-// int timer_gettime(timer_t, struct itimerspec *);
-// int timer_settime(timer_t, int, const struct itimerspec *restrict,
-// 		  struct itimerspec *restrict);
+int timer_create(clockid_t, struct sigevent *restrict, timer_t *restrict);
+int timer_delete(timer_t);
+int timer_getoverrun(timer_t);
+int timer_gettime(timer_t, struct itimerspec *);
+int timer_settime(timer_t, int, const struct itimerspec *restrict,
+		  struct itimerspec *restrict);
 int timespec_get(struct timespec *, int);
 void tzset(void);
 

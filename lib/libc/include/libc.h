@@ -15,13 +15,13 @@
 static struct {
 	enum {
 		LIBC_ENVP_TOUCHED = 1 << 0,
-
 	} flags;
 	struct {
+		volatile atomic_flag abort;
 		volatile atomic_flag malloc;
 		volatile atomic_flag environ;
 	} lock;
 	struct __locale_t locale;
-} libc = { .lock = { ATOMIC_FLAG_INIT } };
+} libc = { .lock = { ATOMIC_FLAG_INIT, ATOMIC_FLAG_INIT, ATOMIC_FLAG_INIT } };
 
 #endif

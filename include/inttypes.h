@@ -204,6 +204,7 @@
 
 typedef __WCHAR_TYPE__ wchar_t;
 
+// TODO: make it private
 typedef struct {
 	intmax_t quot, rem;
 } imaxdiv_t;

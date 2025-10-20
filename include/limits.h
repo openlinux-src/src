@@ -29,7 +29,7 @@
 #define ARG_MAX	      131072
 #define FILESIZEBITS  64
 #define HOST_NAME_MAX 255
-#define IOV_MAX	      1024
+#define IOV_MAX	      INT_MAX
 #define NAME_MAX      255
 #define NGROUPS_MAX   32
 #define PAGESIZE      4096

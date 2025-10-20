@@ -652,8 +652,10 @@ int loop(int flags)
 
 	while (1) {
 		ssize_t n = readline(PS, buf + offset, sizeof(buf) - offset);
-		if (n == -1)
+
+		if (n == -1) {
 			return 1;
+		}
 
 		buf[offset + n] = '\0';
 
@@ -1049,8 +1051,6 @@ int main(int argc, char **argv)
 	/* Initialize builtin hash table */
 	builtin_init();
 
-	printf("Welcome to OpenLinux Shell (sh)\n");
-
 	for (int i = 1; i < argc; i++) {
 		if (strcmp(argv[i], "-c") == 0) {
 			int pipefd[2];
@@ -1100,6 +1100,7 @@ int main(int argc, char **argv)
 	}
 
 	loop(flags);
+
 	tty_restore();
 	return 0;
 }

@@ -9,47 +9,20 @@ typedef __UINT16_TYPE__ uint16_t;
 typedef __UINT32_TYPE__ uint32_t;
 typedef __UINT64_TYPE__ uint64_t;
 
-static __inline uint16_t __bswap16(uint16_t __x)
-{
-	return __x << 8 | __x >> 8;
-}
+uint16_t be16toh(uint16_t);
+uint32_t be32toh(uint32_t);
+uint64_t be64toh(uint64_t);
 
-static __inline uint32_t __bswap32(uint32_t __x)
-{
-	return __x >> 24 | __x >> 8 & 0xff00 | __x << 8 & 0xff0000 | __x << 24;
-}
+uint16_t htobe16(uint16_t);
+uint32_t htobe32(uint32_t);
+uint64_t htobe64(uint64_t);
 
-static __inline uint64_t __bswap64(uint64_t __x)
-{
-	return (__bswap32(__x) + 0ULL) << 32 | __bswap32(__x >> 32);
-}
+uint16_t htole16(uint16_t);
+uint32_t htole32(uint32_t);
+uint64_t htole64(uint64_t);
 
-#if __BYTE_ORDER == __LITTLE_ENDIAN
-#define htobe16(x) __bswap16(x)
-#define be16toh(x) __bswap16(x)
-#define htobe32(x) __bswap32(x)
-#define be32toh(x) __bswap32(x)
-#define htobe64(x) __bswap64(x)
-#define be64toh(x) __bswap64(x)
-#define htole16(x) (uint16_t)(x)
-#define le16toh(x) (uint16_t)(x)
-#define htole32(x) (uint32_t)(x)
-#define le32toh(x) (uint32_t)(x)
-#define htole64(x) (uint64_t)(x)
-#define le64toh(x) (uint64_t)(x)
-#else
-#define htobe16(x) (uint16_t)(x)
-#define be16toh(x) (uint16_t)(x)
-#define htobe32(x) (uint32_t)(x)
-#define be32toh(x) (uint32_t)(x)
-#define htobe64(x) (uint64_t)(x)
-#define be64toh(x) (uint64_t)(x)
-#define htole16(x) __bswap16(x)
-#define le16toh(x) __bswap16(x)
-#define htole32(x) __bswap32(x)
-#define le32toh(x) __bswap32(x)
-#define htole64(x) __bswap64(x)
-#define le64toh(x) __bswap64(x)
-#endif
+uint16_t le16toh(uint16_t);
+uint32_t le32toh(uint32_t);
+uint64_t le64toh(uint64_t);
 
 #endif

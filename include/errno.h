@@ -1,8 +1,8 @@
 #ifndef __ERRNO_H
 #define __ERRNO_H
 
-#define errno (*__errno_location())
-extern int *__errno_location(void);
+#define errno (*__errno())
+extern int *_Nonnull __errno(void) __attribute__((const));
 
 #define EPERM		1
 #define ENOENT		2

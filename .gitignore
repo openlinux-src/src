@@ -9,6 +9,7 @@ bin/*/*
 *.d
 *.a
 
+tests/headers/output.txt
 tools/libc/*.txt
 compile_commands.json
 .cache

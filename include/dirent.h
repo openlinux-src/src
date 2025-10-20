@@ -17,6 +17,8 @@
 typedef struct __DIR DIR;
 typedef __UINT64_TYPE__ ino_t;
 typedef __UINT32_TYPE__ reclen_t;
+typedef __SIZE_TYPE__ size_t;
+typedef __INT64_TYPE__ ssize_t;
 
 struct dirent {
 	ino_t d_ino;
@@ -30,11 +32,18 @@ struct posix_dent {
 	char d_name[];
 };
 
+int alphasort(const struct dirent **, const struct dirent **);
 int closedir(DIR *);
 int dirfd(DIR *);
 DIR *fdopendir(int);
 DIR *opendir(const char *);
+ssize_t posix_getdents(int, void *, size_t, int);
 struct dirent *readdir(DIR *);
 int readdir_r(DIR *restrict, struct dirent *restrict, struct dirent **restrict);
+void rewinddir(DIR *);
+int scandir(const char *, struct dirent ***, int (*)(const struct dirent *),
+	    int (*)(const struct dirent **, const struct dirent **));
+void seekdir(DIR *, long);
+long telldir(DIR *);
 
 #endif

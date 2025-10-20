@@ -39,26 +39,32 @@
 
 #define O_CLOEXEC 02000000
 #define O_CLOFORK
+#undef O_CREAT
 #define O_CREAT	    00000100
 #define O_DIRECTORY 00200000
-#define O_EXCL	    00000200
-#define O_NOCTTY    00000400
-#define O_NOFOLLOW  00400000
-#define O_TRUNC	    00001000
-#define O_TTY_INIT  0
+#undef O_EXCL
+#define O_EXCL	   00000200
+#define O_NOCTTY   00000400
+#define O_NOFOLLOW 00400000
+#define O_TRUNC	   00001000
+#define O_TTY_INIT 0
 
-#define O_APPEND   00002000
-#define O_DSYNC	   00010000
+#define O_APPEND 00002000
+#define O_DSYNC	 00010000
+#undef O_NONBLOCK
 #define O_NONBLOCK 00004000
 #define O_SYNC	   (04000000 | O_DSYNC)
-#define O_RSYNC
+#define O_RSYNC	   O_SYNC
 
 #define O_ACCMODE 00000003
 #define O_EXEC	  010000000
-#define O_RDONLY  000000000
-#define O_RDWR	  00000002
-#define O_SEARCH  010000000
-#define O_WRONLY  000000001
+#undef O_RDONLY
+#define O_RDONLY 000000000
+#undef O_RDWR
+#define O_RDWR	 00000002
+#define O_SEARCH 010000000
+#undef O_WRONLY
+#define O_WRONLY 000000001
 
 #define AT_FDCWD	    (-100)
 #define AT_EACCESS	    0x200
@@ -80,6 +86,14 @@ typedef __INT64_TYPE__ pid_t;
 struct f_owner_ex {
 	int type;
 	pid_t pid;
+	short l_type;
+	short l_whence;
+	off_t l_start;
+	off_t l_len;
+	pid_t l_pid;
+};
+
+struct flock {
 	short l_type;
 	short l_whence;
 	off_t l_start;
