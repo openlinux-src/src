@@ -6,29 +6,38 @@ A lightweight Linux distribution for x86_64 and aarch64 processor architectures.
 Philosophy
 ----------
 
-The core philosophy behind openlinux is to redefine the role of the C standard library (libc) as a 
-lightweight, stable, and portable interface between user code and the kernel — not as a duplication of the 
-kernel’s headers and definitions.
+The core philosophy behind openlinux is to  redefine  the  role  of  the  C
+standard library (libc) as a lightweight, stable,  and  portable  interface
+between user code and the kernel — not as a  duplication  of  the  kernel’s
+headers and definitions.
 
-In many existing implementations, the libc layer attempts to replicate or shadow kernel interfaces, leading 
-to inconsistencies, ABI divergence, and maintenance challenges across UNIX-like systems. In openlinux, 
-we intentionally avoid such redundancy. The system headers provided by the kernel should remain the 
-single source of truth for kernel-level programming. The libc’s role is to bridge, not to emulate, the kernel.
+In many existing implementations, the libc layer attempts to  replicate  or
+shadow kernel interfaces, leading to inconsistencies, ABI  divergence,  and
+maintenance  challenges  across  UNIX-like  systems.   In   openlinux,   we
+intentionally avoid such redundancy. The system  headers  provided  by  the
+kernel  should  remain  the  single  source  of  truth   for   kernel-level
+programming. The libc’s role is to bridge, not to emulate, the kernel.
 
-For this reason, openlinux/libc does not provide redundant kernel definitions, nor does it attempt to mimic 
-every aspect of the kernel’s API. Similarly, the library does not yet implement full locale support — 
-although the necessary symbols and user-space API definitions are in place to ensure compatibility with 
-existing software. A future companion library is planned to allow developers to override standard libc 
-functions with complete locale-aware implementations, without relying on weak symbol bindings.
+For  this  reason,  openlinux/libc  does  not  provide   redundant   kernel
+definitions, nor does it attempt to mimic every aspect of the kernel’s API.
+Similarly, the library  does  not  yet  implement  full  locale  support  —
+although the necessary symbols and user-space API definitions are in  place
+to ensure compatibility with existing software. A future companion  library
+is planned to allow developers to override  standard  libc  functions  with
+complete locale-aware  implementations,  without  relying  on  weak  symbol
+bindings.
 
-Our design goals are portability, clarity, and stability. Instead of assembling prebuilt components like
-modern Linux distributions often do, we are building a complete userspace stack from scratch, taking 
-inspiration from the best design choices of established systems such as BSD, musl, and Bionic.
+Our design goals  are  portability,  clarity,  and  stability.  Instead  of
+assembling prebuilt components like modern Linux distributions often do, we
+are building a complete userspace stack from  scratch,  taking  inspiration
+from the best design choices of established systems such as BSD, musl,  and
+Bionic.
 
-The project was born from the lack of a BSD-style, monorepo-based Linux environment — one that 
-provides consistent ABI, predictable rollouts, and a truly cohesive userspace. We aim for gradual, 
-deliberate development rather than rushed releases. See the ROADMAP file for details on current 
-progress and planned milestones.
+The project was born from the lack of  a  BSD-style,  monorepo-based  Linux
+environment — one that provides consistent ABI, predictable rollouts, and a
+truly cohesive userspace. We aim for gradual, deliberate development rather
+than rushed releases. See the ROADMAP file for details on current  progress
+and planned milestones.
 
 Special Thanks
 --------------
