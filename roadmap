@@ -17,6 +17,7 @@ Short-term Goals
 Mid-term Goals
 --------------
 
+ - Init system
  - Complete the shell – create a fully POSIX-compliant command interpreter.
  - Add POSIX coreutils – implement essential POSIX-compliant system utilities.
  - LLVM utilities - clang llvm-nm....

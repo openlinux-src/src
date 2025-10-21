@@ -1,3 +1,5 @@
+ROOT := $(shell git rev-parse --show-toplevel)
+
 # Build architecute (x86_64/aarch64/armv7-m)
 ARCH := x86_64
 # ARCH := aarch64
@@ -5,11 +7,19 @@ ARCH := x86_64
 
 VENDOR := none
 
+KERNEL ?= $(ROOT)/../kernel
+
 LLVM_PREFIX := llvm-
 
 HOSTCC := clang
 HOSTLD := lld
 HOSTAR := ${LLVM_PREFIX}ar
+
+ifeq ($(uname),Darwin)
+TAR := gtar
+else
+TAR := tar
+endif
 
 # Enabled libraries
 LIBS := libc libm libjson
@@ -45,6 +55,7 @@ OBJ := $(SRC:.c=.o)
 DEP := $(OBJ:.o=.d)
 -include $(DEP)
 CFLAGS  += -I$(CURDIR)/../../build/$(ARCH)/sysroot/usr/include
+CFLAGS  += -I$(CURDIR)/../../libs/libc/arch/$(ARCH)/include
 LDFLAGS += -fuse-ld=lld -Wl,--as-needed -Wl,--gc-sections 
 LDFLAGS += -Wl,--build-id=none
 LIB := $(CURDIR)/../../build/$(ARCH)/sysroot/lib/libc.a

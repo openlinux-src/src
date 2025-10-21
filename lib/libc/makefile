@@ -25,7 +25,7 @@ CFLAGS += -I$(CURDIR)/arch/$(ARCH)
 CFLAGS += -I$(CURDIR)/arch/$(ARCH)/include
 
 $(CURDIR)/arch/$(ARCH)/include/linux/version.h:
-	$(MAKE) -C ../../sys KBUILD_HOSTLDFLAGS= ARCH=$(ARCH) headers_install INSTALL_HDR_PATH="$(CURDIR)/arch/$(ARCH)"
+	$(MAKE) -C $(KERNEL) KBUILD_HOSTLDFLAGS= ARCH=$(ARCH) headers_install INSTALL_HDR_PATH="$(CURDIR)/arch/$(ARCH)"
 
 %.o: %.c
 	$(TASK) CC $(notdir $@)
