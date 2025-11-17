@@ -2,18 +2,15 @@
 
 int strncmp(const char *s1, const char *s2, size_t n)
 {
-	int result = 0;
+	const unsigned char *p1 = (const unsigned char *)s1;
+	const unsigned char *p2 = (const unsigned char *)s2;
 
-	while (n > 0 && *s1 != '\0' && *s2 != '\0') {
-		if ((result = *s1 - *s2) != 0)
-			break;
-		s1++;
-		s2++;
-		n--;
+	while (n-- > 0) {
+		if (*p1 != *p2 || *p1 == '\0')
+			return *p1 - *p2;
+		p1++;
+		p2++;
 	}
 
-	if (n == 0)
-		result = 0;
-
-	return result;
+	return 0;
 }
