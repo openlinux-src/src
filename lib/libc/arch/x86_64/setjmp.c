@@ -1,6 +1,6 @@
 #include <setjmp.h>
 
-__attribute__((naked)) int setjmp(jmp_buf env)
+__attribute__((naked, returns_twice)) int setjmp(jmp_buf env)
 {
 	__asm__ __volatile__("mov %rbx,(%rdi)\n"
 			     "mov %rbp,8(%rdi)\n"
