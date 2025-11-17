@@ -1,7 +1,8 @@
 openlinux
 =========
 
-A lightweight Linux distribution for x86_64 and aarch64 processor architectures.
+A  lightweight  Linux  distribution  for  x86_64  and   aarch64   processor
+architectures.
 
 Philosophy
 ----------
@@ -42,18 +43,10 @@ and planned milestones.
 Special Thanks
 --------------
 
-This project draws inspiration from the following excellent projects:
-- Google Bionic libc
-- musl libc
-- GNU glibc
-- uClibc-ng
-- NetBSD
-- OpenBSD
-- Newlib
-- Linux
-- picolibc
-- Embedded Artistry libc
-- Clang and GCC source codes
+This project draws  inspiration  from  the  following  excellent  projects:
+Google Bionic libc, musl  libc,  GNU  glibc,  uClibc-ng,  NetBSD,  OpenBSD,
+Newlib, Linux, picolibc, Embedded  Artistry  libc,  Clang  and  GCC  source
+codes.
 
 
 COPYRIGHT

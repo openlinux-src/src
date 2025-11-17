@@ -1,0 +1,14 @@
+List of maintainers
+===================
+
+Description of this format can be found in the linux  source  tree  in  the
+MAINTAINERS file. See that for details.
+
+OPENLINUX LIBC
+M: bellrise <bellrise.dev@gmail.com>
+S: Odd Fixes
+F: lib/libc/
+
+THE REST
+M: Kacper Fiedorowicz <fiedorowicz.kacper@gmail.com>
+F: */
