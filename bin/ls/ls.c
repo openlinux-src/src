@@ -16,10 +16,6 @@
 		    (((x) >> 8) & 0x00000fff)))
 #define minor(x) ((unsigned)((((x) >> 12) & 0xffffff00) | ((x) & 0x000000ff)))
 
-#define makedev(x, y)                                                   \
-	((((x) & 0xfffff000ULL) << 32) | (((x) & 0x00000fffULL) << 8) | \
-	 (((y) & 0xffffff00ULL) << 12) | (((y) & 0x000000ffULL)))
-
 #define FLAG_LONG	(1 << 0)
 #define FLAG_ALL	(1 << 1)
 #define FLAG_ALMOST_ALL (1 << 2)
@@ -46,7 +42,7 @@
 #define FLAG_ATIME	(1 << 23)
 #define FLAG_NO_SORT	(1 << 24)
 
-struct file_info {
+struct entry {
 	char *name;
 	char *path;
 	struct stat st;
@@ -164,8 +160,8 @@ static struct timespec get_sort_time(const struct stat *st)
 
 static int compare_files(const void *a, const void *b)
 {
-	const struct file_info *fa = (const struct file_info *)a;
-	const struct file_info *fb = (const struct file_info *)b;
+	const struct entry *fa = (const struct entry *)a;
+	const struct entry *fb = (const struct entry *)b;
 	int result = 0;
 
 	if (flags & FLAG_NO_SORT)
@@ -195,7 +191,7 @@ static int compare_files(const void *a, const void *b)
 	return (flags & FLAG_REVERSE) ? -result : result;
 }
 
-static void print_long_format(const struct file_info *file)
+static void print_long_format(const struct entry *file)
 {
 	char perms[11];
 	char time_buf[64];
@@ -283,7 +279,7 @@ static void print_long_format(const struct file_info *file)
 	printf("\n");
 }
 
-static void print_simple_format(const struct file_info *file)
+static void print_simple_format(const struct entry *file)
 {
 	if (flags & FLAG_INODE)
 		printf("%8lu ", (unsigned long)file->st.st_ino);
@@ -312,8 +308,8 @@ static void print_simple_format(const struct file_info *file)
 	}
 }
 
-static int get_file_info(const char *path, const char *name,
-			 struct file_info *info, int follow_links)
+static int get_file_info(const char *path, const char *name, struct entry *info,
+			 int follow_links)
 {
 	int ret;
 
@@ -344,17 +340,17 @@ static int get_file_info(const char *path, const char *name,
 	return 0;
 }
 
-static void free_file_info(struct file_info *info)
+static void free_file_info(struct entry *info)
 {
 	free(info->name);
 	free(info->path);
 }
 
-static int list_directory(const char *path, int show_header)
+static int lsdir(const char *path, int show_header)
 {
 	DIR *dir;
 	struct dirent *entry;
-	struct file_info *files = NULL;
+	struct entry *files = NULL;
 	int file_count = 0;
 	int capacity = 0;
 	char full_path[PATH_MAX];
@@ -372,8 +368,7 @@ static int list_directory(const char *path, int show_header)
 
 		if (file_count >= capacity) {
 			capacity = capacity ? capacity * 2 : 16;
-			files = realloc(files,
-					capacity * sizeof(struct file_info));
+			files = realloc(files, capacity * sizeof(struct entry));
 			if (!files) {
 				perror("realloc");
 				closedir(dir);
@@ -398,8 +393,7 @@ static int list_directory(const char *path, int show_header)
 	closedir(dir);
 
 	if (!(flags & FLAG_NO_SORT)) {
-		qsort(files, file_count, sizeof(struct file_info),
-		      compare_files);
+		qsort(files, file_count, sizeof(struct entry), compare_files);
 	}
 
 	if (show_header) {
@@ -420,7 +414,7 @@ static int list_directory(const char *path, int show_header)
 		if ((flags & FLAG_RECURSIVE) && S_ISDIR(files[i].st.st_mode) &&
 		    strcmp(files[i].name, ".") != 0 &&
 		    strcmp(files[i].name, "..") != 0) {
-			list_directory(files[i].path, 1);
+			lsdir(files[i].path, 1);
 		}
 
 		free_file_info(&files[i]);
@@ -434,9 +428,9 @@ static int list_directory(const char *path, int show_header)
 	return 0;
 }
 
-static int list_file(const char *path)
+static int ls(const char *path)
 {
-	struct file_info info;
+	struct entry info;
 	struct stat st;
 	int follow = (flags & FLAG_FOLLOW_ARG) || (flags & FLAG_FOLLOW_ALL);
 
@@ -446,7 +440,7 @@ static int list_file(const char *path)
 	}
 
 	if (S_ISDIR(st.st_mode) && !(flags & FLAG_DIRECTORY)) {
-		return list_directory(path, 0);
+		return lsdir(path, 0);
 	}
 
 	char *name = strrchr(path, '/');
@@ -562,12 +556,12 @@ int main(int argc, char **argv)
 	}
 
 	if (optind == argc) {
-		ret = list_directory(".", 0);
+		ret = lsdir(".", 0);
 	} else {
 		for (int i = optind; i < argc; i++) {
 			if (i > optind)
 				printf("\n");
-			if (list_file(argv[i]) != 0) {
+			if (ls(argv[i]) != 0) {
 				ret = 1;
 			}
 		}

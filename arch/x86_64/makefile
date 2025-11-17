@@ -1,7 +1,9 @@
 include ../../config
 
 install:
-	$(MAKE) -C boot install
+	$(MAKE) -C initrd install
 
 clean:
-	$(MAKE) -C boot clean
+	$(MAKE) -C initrd clean
+
+.PHONY: install clean

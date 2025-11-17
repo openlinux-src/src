@@ -38,6 +38,11 @@ void *malloc(size_t size)
 	LIBC_LOCK(libc.lock.malloc);
 
 	uint32_t class_index = get_size_class(size);
+	if (class_index >=
+	    sizeof(global_size_class) / sizeof(global_size_class[0])) {
+		LIBC_UNLOCK(libc.lock.malloc);
+		return NULL;
+	}
 	const struct class *cls = &global_size_class[class_index];
 
 	struct page *p = __malloc_pvec;
@@ -56,6 +61,8 @@ void *malloc(size_t size)
 						p->block.used++;
 						LIBC_UNLOCK(p->lock);
 						LIBC_UNLOCK(libc.lock.malloc);
+						if (p->heap == NULL)
+							return NULL;
 						return p->heap +
 						       (i * p->block.size);
 					}
@@ -78,6 +85,8 @@ void *malloc(size_t size)
 						p->block.used++;
 						LIBC_UNLOCK(p->lock);
 						LIBC_UNLOCK(libc.lock.malloc);
+						if (p->heap == NULL)
+							return NULL;
 						return p->heap +
 						       (i * p->block.size);
 					}
@@ -100,6 +109,8 @@ void *malloc(size_t size)
 						LIBC_UNLOCK(p->lock);
 						LIBC_UNLOCK(libc.lock.malloc);
 
+						if (p->heap == NULL)
+							return NULL;
 						return p->heap +
 						       (i * p->block.size);
 					}
@@ -144,6 +155,12 @@ void *malloc(size_t size)
 	new_page->bitmap = (uint8_t *)mem + sizeof(struct page);
 	memset(new_page->bitmap, 0, bitmap_size);
 	new_page->heap = (uint8_t *)mem + sizeof(struct page) + bitmap_size;
+
+	if (new_page->heap == NULL || new_page->bitmap == NULL) {
+		munmap(mem, page_size);
+		LIBC_UNLOCK(libc.lock.malloc);
+		return NULL;
+	}
 	atomic_flag_clear(&new_page->lock);
 	new_page->next = __malloc_pvec;
 	new_page->prev = NULL;

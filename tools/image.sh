@@ -4,9 +4,10 @@ BOOTFS_IMG="bootfs.img"
 ROOTFS_IMG="root.ext4"
 MNT_DIR="./mnt"
 
-BOOT_SIZE=16
-ROOT_SIZE=32
-IMG_SIZE=64
+BOOT_SIZE=64
+ROOT_SIZE=128
+ROOT_IMG_SIZE=$((ROOT_SIZE - 2))
+IMG_SIZE=$((BOOT_SIZE + ROOT_SIZE + 1))
 
 task() {
 	printf '  \033[34m%+8s\033[m %s\n' "$1" "$2"
@@ -14,10 +15,10 @@ task() {
 
 if [ "$1" = "__docker" ]; then
 	task "IMAGE" "Creating root filesystem image"
-	dd if=/dev/zero of="$ROOTFS_IMG" bs=1M count=$ROOT_SIZE status=none
+	dd if=/dev/zero of="$ROOTFS_IMG" bs=1M count=$ROOT_IMG_SIZE status=none
 
 	task "FORMAT" "Formatting root filesystem image"
-	mkfs.ext4 -q -F -L rootfs "$ROOTFS_IMG"
+	mkfs.ext4 -q -F -L rootfs -m 0 "$ROOTFS_IMG"
 
 	task "MOUNT" "Mounting root filesystem image"
 	mkdir -p "$MNT_DIR"
@@ -31,11 +32,15 @@ if [ "$1" = "__docker" ]; then
 
 	task "IMAGE" "Creating boot image"
 	dd if=/dev/zero of="bootfs.img" bs=1M count=$BOOT_SIZE status=none
-	mkfs.fat -F 32 "bootfs.img" >/dev/null 2>&1
+	mkfs.fat -F 32 -n EFI "bootfs.img" >/dev/null
 	mmd -i "bootfs.img" "::/EFI" "::/EFI/BOOT"
 	mcopy -i "bootfs.img" \
 		"./build/x86_64/EFI/BOOT/BOOTX64.EFI" \
 		"::/EFI/BOOT/BOOTX64.EFI"
+
+	mcopy -i "bootfs.img" \
+		"./build/x86_64/EFI/BOOT/initrd" \
+		"::/initrd"
 
 	IMG="$O"
 
@@ -73,6 +78,7 @@ else
 	docker run -q -it --rm --platform linux/amd64 \
 		--privileged \
 		-e O="$O" \
+		-e ARCH="$ARCH" \
 		-v "$(pwd)":/openlinux openlinux-image:latest \
 		/bin/sh -c "sh tools/image.sh __docker"
 	rm -f dockerfile

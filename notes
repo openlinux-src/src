@@ -1,4 +1,0 @@
-manpage:
-
-fetch https://pubs.opengroup.org/onlinepubs/9799919799/functions/{func}.html
-parse .html -> .1 (python?)

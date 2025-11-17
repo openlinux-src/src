@@ -1,0 +1,6 @@
+kernel.root=/dev/vda2
+kernel.rw
+kernel.loglevel=8
+kernel.ignore_loglevel
+kernel.console=ttyS0
+kernel.init=/init

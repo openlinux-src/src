@@ -5,6 +5,14 @@
 #define NULL ((void *)0)
 #endif
 
+#define STDIN_FILENO  0
+#define STDOUT_FILENO 1
+#define STDERR_FILENO 2
+
+#define UEFI_FILE_PROTOCOL_REVISION	   0x00010000 // Revision 1.0
+#define UEFI_FILE_PROTOCOL_REVISION2	   0x00020000 // Revision 2.0
+#define UEFI_FILE_PROTOCOL_LATEST_REVISION UEFI_FILE_PROTOCOL_REVISION2
+
 #define UEFIERR(a)	(0x8000000000000000 | (uint32_t)(a))
 #define UEFI_ERROR_MASK 0x8000000000000000
 #define UEFIERR_OEM(a)	(0xc000000000000000 | (uint32_t)(a))
@@ -79,7 +87,7 @@
 #define END_INSTANCE_DEVICE_PATH_SUBTYPE 0x01
 #define END_DEVICE_PATH_LENGTH		 (sizeof(struct efi_device_path))
 #define DP_IS_END_TYPE(a)
-#define DP_IS_END_SUBTYPE(a)        ( ((a)->sub_type == END_ENTIRE_DEVICE_PATH_SUBTYPE )
+#define DP_IS_END_SUBTYPE(a)        ( ((a)->subtype == END_ENTIRE_DEVICE_PATH_SUBTYPE )
 #define DEVICE_PATH_TYPE(a)	   (((a)->type) & UEFI_DP_TYPE_MASK)
 #define DEVICE_PATH_SUBTYPE(a)	   ((a)->subtype)
 #define DEVICE_PATH_NODE_LENGTH(a) (((a)->length[0]) | ((a)->length[1] << 8))
@@ -87,10 +95,10 @@
 	((struct efi_device_path *)(((uint8_t *)(a)) + \
 				    DEVICE_PATH_NODE_LENGTH(a)))
 #define IS_DEVICE_PATH_END_TYPE(a) (DEVICE_PATH_TYPE(a) == END_DEVICE_PATH_TYPE)
-#define IS_DEVICE_PATH_END_SUB_TYPE(a) \
-	((a)->sub_type == END_ENTIRE_DEVICE_PATH_SUBTYPE)
+#define IS_DEVICE_PATH_END_SUBTYPE(a) \
+	((a)->subtype == END_ENTIRE_DEVICE_PATH_SUBTYPE)
 #define IS_DEVICE_PATH_END(a) \
-	(IS_DEVICE_PATH_END_TYPE(a) && IS_DEVICE_PATH_END_SUB_TYPE(a))
+	(IS_DEVICE_PATH_END_TYPE(a) && IS_DEVICE_PATH_END_SUBTYPE(a))
 #define IS_DEVICE_PATH_UNPACKED(a) ((a)->type & UEFI_DP_TYPE_UNPACKED)
 
 #define SET_DEVICE_PATH_NODE_LENGTH(a, l)             \
@@ -101,7 +109,7 @@
 #define SET_DEVICE_PATH_END_NODE(a)                              \
 	{                                                        \
 		(a)->type = END_DEVICE_PATH_TYPE;                \
-		(a)->sub_type = END_ENTIRE_DEVICE_PATH_SUBTYPE;  \
+		(a)->subtype = END_ENTIRE_DEVICE_PATH_SUBTYPE;   \
 		(a)->length[0] = sizeof(struct efi_device_path); \
 		(a)->length[1] = 0;                              \
 	}
@@ -391,7 +399,8 @@
 	  0x9562,                       \
 	  0x11d2,                       \
 	  { 0x8E, 0x3F, 0x00, 0xA0, 0xC9, 0x69, 0x72, 0x3B } }
-#define LOADED_IMAGE_PROTOCOL		    EFI_LOADED_IMAGE_PROTOCOL_GUID
+
+#define LOADED_IMAGE_PROTOCOL		    UEFI_LOADED_IMAGE_PROTOCOL_GUID
 #define UEFI_LOADED_IMAGE_PROTOCOL_REVISION 0x1000
 #define UEFI_IMAGE_INFORMATION_REVISION	    UEFI_LOADED_IMAGE_PROTOCOL_REVISION
 
@@ -492,6 +501,8 @@
 	  0x48da,                      \
 	  { 0xad, 0x11, 0x91, 0x71, 0x79, 0x13, 0x83, 0x1c } }
 
+#define ENOMEM 12
+
 typedef __builtin_va_list va_list;
 typedef __UINT8_TYPE__ uint8_t;
 typedef __UINT16_TYPE__ uint16_t;
@@ -499,11 +510,13 @@ typedef __UINT32_TYPE__ uint32_t;
 typedef __UINT64_TYPE__ uint64_t;
 typedef __INT16_TYPE__ int16_t;
 typedef __INT32_TYPE__ int32_t;
+typedef __INT64_TYPE__ int64_t;
 typedef __SIZE_TYPE__ size_t;
 typedef uint8_t bool;
 typedef uint16_t wchar_t;
 typedef uint64_t off_t;
 typedef uint64_t ssize_t;
+typedef __UINTPTR_TYPE__ uintptr_t;
 
 struct uefi_table_header {
 	uint64_t signature;
@@ -641,48 +654,48 @@ struct uefi_runtime_services {
 };
 
 enum uefi_allocate_type {
-	uefi_allocate_any_pages,
-	uefi_allocate_max_address,
-	uefi_allocate_address,
-	uefi_max_allocate_type
+	UEFI_ALLOCATE_ANY_PAGES,
+	UEFI_ALLOCATE_MAX_ADDRESS,
+	UEFI_ALLOCATE_ADDRESS,
+	UEFI_MAX_ALLOCATE_TYPE
 };
 
 enum uefi_memory_type {
-	uefi_reserved_memory_type,
-	uefi_loader_code,
-	uefi_loader_data,
-	uefi_boot_services_code,
-	uefi_boot_services_data,
-	uefi_runtime_services_code,
-	uefi_runtime_services_data,
-	uefi_conventional_memory,
-	uefi_unusable_memory,
-	uefi_acpi_reclaim_memory,
-	uefi_acpi_memory_nvs,
-	uefi_memory_mapped_io,
-	uefi_memory_mapped_io_port_space,
-	uefi_pal_code,
-	uefi_persistent_memory,
-	uefi_persistent_memory_type,
-	uefi_max_memory_type
+	UEFI_RESERVED_MEMORY_TYPE,
+	UEFI_LOADER_CODE,
+	UEFI_LOADER_DATA,
+	UEFI_BOOT_SERVICES_CODE,
+	UEFI_BOOT_SERVICES_DATA,
+	UEFI_RUNTIME_SERVICES_CODE,
+	UEFI_RUNTIME_SERVICES_DATA,
+	UEFI_CONVENTIONAL_MEMORY,
+	UEFI_UNUSABLE_MEMORY,
+	UEFI_ACPI_RECLAIM_MEMORY,
+	UEFI_ACPI_MEMORY_NVS,
+	UEFI_MEMORY_MAPPED_IO,
+	UEFI_MEMORY_MAPPED_IO_PORT_SPACE,
+	UEFI_PAL_CODE,
+	UEFI_PERSISTENT_MEMORY,
+	UEFI_PERSISTENT_MEMORY_TYPE,
+	UEFI_MAX_MEMORY_TYPE
 };
 
 enum uefi_timer_delay {
-	uefi_timer_cancel,
-	uefi_timer_periodic,
-	uefi_timer_relative,
-	uefi_timer_type_max
+	UEFI_TIMER_CANCEL,
+	UEFI_TIMER_PERIODIC,
+	UEFI_TIMER_RELATIVE,
+	UEFI_TIMER_TYPE_MAX
 };
 
 enum uefi_locate_search_type {
-	uefi_all_handles,
-	uefi_by_register_notify,
-	uefi_by_protocol
+	UEFI_ALL_HANDLES,
+	UEFI_BY_REGISTER_NOTIFY,
+	UEFI_BY_PROTOCOL
 };
 
 struct uefi_device_path {
 	uint8_t type;
-	uint8_t sub_type;
+	uint8_t subtype;
 	uint8_t length[2];
 };
 
@@ -758,7 +771,7 @@ struct uefi_boot_services {
 	uint64_t (*exit)(void *image_handle, uint64_t exit_status,
 			 uint64_t exit_data_size, wchar_t *exit_data);
 
-	void *unload_image;
+	uint64_t (*unload_image)(void *image_handle);
 	uint64_t (*exit_boot_services)(void *image_handle, uint64_t map_key);
 
 	/* Miscellaneous Services */
@@ -830,19 +843,19 @@ struct uefi_capsule_block_descriptor {
 };
 
 enum uefi_parity_type {
-	uefi_default_parity,
-	uefi_no_parity,
-	uefi_even_parity,
-	uefi_odd_parity,
-	uefi_mark_parity,
-	uefi_space_parity
+	UEFI_DEFAULT_PARITY,
+	UEFI_NO_PARITY,
+	UEFI_EVEN_PARITY,
+	UEFI_ODD_PARITY,
+	UEFI_MARK_PARITY,
+	UEFI_SPACE_PARITY
 };
 
 enum uefi_stop_bits_type {
-	uefi_default_stop_bits,
-	uefi_one_stop_bit,
-	uefi_one_five_stop_bits,
-	usefi_two_stop_bits
+	UEFI_DEFAULT_STOP_BITS,
+	UEFI_ONE_STOP_BIT,
+	UEFI_ONE_FIVE_STOP_BITS,
+	USEFI_TWO_STOP_BITS
 };
 
 struct uefi_serial_io_mode {
@@ -1030,8 +1043,85 @@ struct uefi_partition_entry {
 	wchar_t partition_name[36];
 };
 
+struct uefi_loaded_image_protocol {
+	uint32_t revision;
+	void *parent_handle;
+	struct uefi_system_table *system_table;
+	void *device_handle;
+	struct uefi_device_path *file_path;
+	void *reserved;
+	uint32_t load_options_size;
+	void *load_options;
+	void *image_base;
+	uint64_t image_size;
+	enum uefi_memory_type image_code_type;
+	enum uefi_memory_type image_data_type;
+};
+
+struct uefi_file_protocol {
+	uint64_t revision; // The version of the EFI_FILE_PROTOCOL interface (e.g., EFI_FILE_PROTOCOL_LATEST_REVISION)
+	uint64_t (*open)(struct uefi_file_protocol *this,
+			 struct uefi_file_protocol **new_handle,
+			 wchar_t *file_name, uint64_t open_mode,
+			 uint64_t attributes);
+	uint64_t (*close)(struct uefi_file_protocol *this);
+	uint64_t (*delete)(struct uefi_file_protocol *this);
+	uint64_t (*read)(struct uefi_file_protocol *this, uint64_t *buffer_size,
+			 void *buffer);
+	uint64_t (*write)(struct uefi_file_protocol *this,
+			  uint64_t *buffer_size, void *buffer);
+	uint64_t (*get_position)(struct uefi_file_protocol *this,
+				 uint64_t *position);
+	uint64_t (*set_position)(struct uefi_file_protocol *this,
+				 uint64_t position);
+	uint64_t (*get_info)(struct uefi_file_protocol *this,
+			     struct uefi_guid *information_type,
+			     uint64_t *buffer_size, void *buffer);
+	uint64_t (*set_info)(struct uefi_file_protocol *this,
+			     struct uefi_guid *information_type,
+			     uint64_t buffer_size, void *buffer);
+	uint64_t (*flush)(struct uefi_file_protocol *this);
+	uint64_t (*open_ex)(
+		struct uefi_file_protocol *this,
+		struct uefi_file_protocol **new_handle, wchar_t *file_name,
+		uint64_t open_mode, uint64_t attributes,
+		void *token); // Extended version with async support (revision 2)
+	uint64_t (*read_ex)(
+		struct uefi_file_protocol *this, uint64_t *buffer_size,
+		void *buffer,
+		void *token); // Extended version with async support (revision 2)
+	uint64_t (*write_ex)(
+		struct uefi_file_protocol *this, uint64_t *buffer_size,
+		void *buffer,
+		void *token); // Extended version with async support (revision 2)
+	uint64_t (*flush_ex)(
+		struct uefi_file_protocol *this,
+		void *token); // Extended version with async support (revision 2)
+};
+
+struct uefi_filesystem_protocol {
+	uint32_t revision;
+	uint64_t (*open_volume)(struct uefi_filesystem_protocol *this,
+				struct uefi_file_protocol **root);
+};
+
+struct __tools {
+	void *(*load)(const char *path);
+	uint64_t (*unload)(void *image);
+	void (*options)(void *image, const char *options);
+} extern *image;
+
+extern int errno;
+
 int wctomb(char *, wchar_t);
 int mbtowc(wchar_t *restrict, const char *restrict, size_t);
 ssize_t write(int, const void *, size_t);
+ssize_t read(int, void *, size_t);
+void *malloc(size_t);
+void free(void *);
+void *memcpy(void *, const void *, size_t);
+void *memset(void *, int, size_t);
+int memcmp(const void *, const void *, size_t);
+size_t strlen(const char *);
 
 #endif

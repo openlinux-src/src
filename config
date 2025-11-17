@@ -41,8 +41,12 @@ CFLAGS += -nostdlib -nostdinc -nodefaultlibs
 CFLAGS += -Oz -ffunction-sections -fdata-sections -flto
 CFLAGS += -fno-asynchronous-unwind-tables
 CFLAGS += -fno-unwind-tables -fomit-frame-pointer
+CFLAGS += -fno-omit-frame-pointer
 CFLAGS += -fmerge-all-constants -fno-common
 CFLAGS += -fforce-addr
+
+LDFLAGS += -fuse-ld=lld -Wl,--as-needed -Wl,--gc-sections 
+LDFLAGS += -Wl,--build-id=none
 
 
 TASK := printf '  \033[34m%+8s\033[m %s\n'
@@ -56,8 +60,6 @@ DEP := $(OBJ:.o=.d)
 -include $(DEP)
 CFLAGS  += -I$(CURDIR)/../../build/$(ARCH)/sysroot/usr/include
 CFLAGS  += -I$(CURDIR)/../../libs/libc/arch/$(ARCH)/include
-LDFLAGS += -fuse-ld=lld -Wl,--as-needed -Wl,--gc-sections 
-LDFLAGS += -Wl,--build-id=none
 LIB := $(CURDIR)/../../build/$(ARCH)/sysroot/lib/libc.a
 
 $(BIN): $(OBJ) $(LIB)

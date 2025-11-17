@@ -7,14 +7,6 @@ PACKAGES="$PACKAGES ncurses-dev flex bison elfutils-dev"
 PACKAGES="$PACKAGES openssl-dev perl bc linux-headers"
 PACKAGES="$PACKAGES llvm clang lld diffutils findutils"
 
-BZIMAGE_PATH=""
-
-if [ "$ARCH" = "x86_64" ]; then
-	BZIMAGE_PATH="arch/x86/boot"
-else
-	BZIMAGE_PATH="arch/arm/boot"
-fi
-
 task() {
 	printf '  \033[34m%+8s\033[m %s\n' "$1" "$2"
 }
@@ -35,6 +27,8 @@ task "RUN" "Starting kernel build environment..."
 docker run -q -it --rm --platform linux/amd64 \
     -v "$PWD/build/$ARCH:/build" \
     openlinux-image:latest \
-    /bin/sh -c "yes '' | make -j\$(nproc) LLVM=1 ARCH=$ARCH bzImage; cp $BZIMAGE_PATH/bzImage /build/kernel"
+    /bin/sh
+
+    #/bin/sh -c "yes '' | make -j\$(nproc) LLVM=1 ARCH=$ARCH bzImage; cp vmlinux /build/EFI/BOOT/KERNEL.ELF"
 
 rm -f dockerfile

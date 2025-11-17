@@ -4,15 +4,6 @@
 #include <sys/stat.h>
 #include <sys/mount.h>
 
-#define major(x)                                      \
-	((unsigned)((((x) >> 31 >> 1) & 0xfffff000) | \
-		    (((x) >> 8) & 0x00000fff)))
-#define minor(x) ((unsigned)((((x) >> 12) & 0xffffff00) | ((x) & 0x000000ff)))
-
-#define makedev(x, y)                                                   \
-	((((x) & 0xfffff000ULL) << 32) | (((x) & 0x00000fffULL) << 8) | \
-	 (((y) & 0xffffff00ULL) << 12) | (((y) & 0x000000ffULL)))
-
 int main(void)
 {
 	int sig;
@@ -23,14 +14,6 @@ int main(void)
 		return 1;
 	}
 
-	mknod("/dev/console", S_IFCHR | 0622, makedev(5, 1));
-	mknod("/dev/null", S_IFCHR | 0666, makedev(1, 3));
-
-	mount("proc", "/proc", "proc", 0, "");
-	mount("sysfs", "/sys", "sysfs", 0, "");
-	mount("tmpfs", "/dev", "tmpfs", 0, "");
-
-	chdir("/");
 	sigemptyset(&sigset);
 	sigprocmask(SIG_BLOCK, &sigset, NULL);
 

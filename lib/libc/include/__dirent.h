@@ -19,7 +19,7 @@ struct __DIR {
 	int cached;
 	off_t tell;
 	off_t offset;
-	char buffer[BUFSIZ] aligned(struct linux_dirent64);
+	char buffer[BUFSIZ] __attribute__((__aligned__(8)));
 };
 
 #endif

@@ -7,7 +7,7 @@ all: __all
 
 rootfs: all
 	$(TASK) TAR ${ROOTFS_TAR}
-	$(TAR) --owner=0 --group=0 --numeric-owner -czf build/$(ARCH)/${ROOTFS_TAR} -C build/$(ARCH)/sysroot .
+	COPYFILE_DISABLE=1  $(TAR) --owner=0 --group=0 --numeric-owner -czf build/$(ARCH)/${ROOTFS_TAR} -C build/$(ARCH)/sysroot .
 
 qemu:
 	sh tools/qemu.sh $(ARCH) build/$(ARCH)/openlinux-$(VERSION)-$(ARCH).img
@@ -45,7 +45,7 @@ format:
 
 build/$(ARCH)/openlinux-$(VERSION)-$(ARCH).img: all
 	mkdir -p build/$(ARCH)
-	O="$@" sh tools/image.sh
+	O="$@" ARCH="$(ARCH)" sh tools/image.sh
 
 image: build/$(ARCH)/openlinux-$(VERSION)-$(ARCH).img
 
