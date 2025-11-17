@@ -54,7 +54,7 @@ install: $(BITS_DEST) $(CURDIR)/../../build/$(ARCH)/sysroot/lib/libc.a
 clean:
 	rm -rf libc.a ${OBJ} ${DEP} $(CURDIR)/arch/${ARCH}/include
 
-.PHONY: kernel-headers install clean
+.PHONY: install clean
 
 ifdef DEP
 -include $(DEP)

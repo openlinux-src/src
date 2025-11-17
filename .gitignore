@@ -3,6 +3,7 @@ lib/libc/arch/*/include
 
 bin/*/*
 !bin/*/*.*
+!bin/*/makefile
 
 .DS_Store
 *.o
