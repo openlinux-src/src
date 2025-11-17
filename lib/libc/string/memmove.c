@@ -1,18 +1,21 @@
 #include <stddef.h>
+#include <stdint.h>
 
-void *memmove(void *s1, const void *s2, size_t n)
+void *memmove(void *dst, const void *src, size_t n)
 {
-	char *d = s1;
-	const char *s = s2;
+	uint8_t *d = dst;
+	const uint8_t *s = src;
 
-	if (d < s) {
-		while (n--)
-			*d++ = *s++;
-	} else if (d > s) {
-		d += n;
-		s += n;
-		while (n--)
-			*--d = *--s;
+	if (d == s || n == 0)
+		return dst;
+
+	if ((uintptr_t)d < (uintptr_t)s) {
+		for (size_t i = 0; i < n; i++)
+			d[i] = s[i];
+	} else {
+		for (size_t i = n; i != 0; i--)
+			d[i - 1] = s[i - 1];
 	}
-	return s1;
+
+	return dst;
 }
