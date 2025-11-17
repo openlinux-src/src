@@ -5,6 +5,10 @@ bin/*/*
 !bin/*/*.*
 !bin/*/makefile
 
+arch/*/initrd/*
+!arch/*/initrd/*.*
+!arch/*/initrd/makefile
+
 .DS_Store
 *.o
 *.d
@@ -15,3 +19,4 @@ tests/headers/output.txt
 tools/libc/*.txt
 compile_commands.json
 .cache
+dockerfile
