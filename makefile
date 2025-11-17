@@ -3,6 +3,10 @@ include config
 VERSION := 1.0.0-alpha
 ROOTFS_TAR := openlinux-$(VERSION)-$(ARCH)-rootfs.tar.gz
 
+ifeq ($(wildcard sys/*),)
+$(error "sys/ folder is empty. Did you forget to initialize git submodules? Run 'git submodule update --init --recursive --depth=1'")
+endif
+
 all: __all
 
 rootfs: all
