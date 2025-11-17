@@ -1,4 +1,5 @@
 #include <ctype.h>
+#include <float.h>
 #include <errno.h>
 #include <strings.h>
 #include <limits.h>
@@ -150,11 +151,19 @@ static long double __scanfloat(const char *s, char **end)
 long strtol(const char *restrict nptr, char **restrict endptr, int base)
 {
 	int neg;
-	unsigned long long v = __scanint(nptr, base, LONG_MAX, &neg, endptr);
+	unsigned long long lim;
+	unsigned long long v;
+
+	const char *p = nptr;
+	while (isspace((unsigned char)*p))
+		p++;
+	int is_neg = (*p == '-');
+	lim = is_neg ? (unsigned long long)LONG_MAX + 1ULL : LONG_MAX;
+
+	v = __scanint(nptr, base, lim, &neg, endptr);
+
 	if (neg)
-		return (v > (unsigned long long)LONG_MAX + 1ULL) ?
-			       (errno = ERANGE, LONG_MIN) :
-			       -(long)v;
+		return (v == lim) ? LONG_MIN : -(long)v;
 	else
 		return (v > LONG_MAX) ? (errno = ERANGE, LONG_MAX) : (long)v;
 }
@@ -162,25 +171,50 @@ long strtol(const char *restrict nptr, char **restrict endptr, int base)
 long long strtoll(const char *restrict nptr, char **restrict endptr, int base)
 {
 	int neg;
-	unsigned long long v = __scanint(nptr, base, LLONG_MAX, &neg, endptr);
-	if (neg)
-		return (v > (unsigned long long)LLONG_MAX + 1ULL) ?
-			       (errno = ERANGE, LLONG_MIN) :
-			       -(long long)v;
-	else
-		return (v > LLONG_MAX) ? (errno = ERANGE, LLONG_MAX) :
-					 (long long)v;
+	unsigned long long lim;
+	unsigned long long v;
+
+	const char *p = nptr;
+	while (isspace((unsigned char)*p))
+		p++;
+	int is_neg = (*p == '-');
+
+	lim = is_neg ? (unsigned long long)LLONG_MAX + 1ULL : LLONG_MAX;
+
+	v = __scanint(nptr, base, lim, &neg, endptr);
+
+	if (neg) {
+		if (v == lim)
+			return LLONG_MIN;
+		else
+			return -(long long)v;
+	} else {
+		if (v > LLONG_MAX) {
+			errno = ERANGE;
+			return LLONG_MAX;
+		} else
+			return (long long)v;
+	}
 }
 
 unsigned long strtoul(const char *restrict nptr, char **restrict endptr,
 		      int base)
 {
 	int neg;
-	unsigned long long v = __scanint(nptr, base, ULONG_MAX, &neg, endptr);
+	unsigned long long v;
+
+	v = __scanint(nptr, base, ULONG_MAX, &neg, endptr);
+
 	if (neg) {
 		errno = EINVAL;
 		return 0;
 	}
+
+	if (v > ULONG_MAX) {
+		errno = ERANGE;
+		return ULONG_MAX;
+	}
+
 	return (unsigned long)v;
 }
 
@@ -188,20 +222,49 @@ unsigned long long strtoull(const char *restrict nptr, char **restrict endptr,
 			    int base)
 {
 	int neg;
-	unsigned long long v = __scanint(nptr, base, ULLONG_MAX, &neg, endptr);
+	unsigned long long v;
+
+	v = __scanint(nptr, base, ULLONG_MAX, &neg, endptr);
+
 	if (neg) {
 		errno = EINVAL;
 		return 0;
 	}
+
+	if (v > ULLONG_MAX) {
+		errno = ERANGE;
+		return ULLONG_MAX;
+	}
+
 	return v;
 }
 
 float strtof(const char *restrict nptr, char **restrict endptr)
 {
-	return (float)__scanfloat(nptr, endptr);
+	long double val = __scanfloat(nptr, endptr);
+
+	if (val > FLT_MAX) {
+		errno = ERANGE;
+		return HUGE_VALF;
+	} else if (val < -FLT_MAX) {
+		errno = ERANGE;
+		return -HUGE_VALF;
+	}
+
+	return (float)val;
 }
 
 long double strtold(const char *restrict nptr, char **restrict endptr)
 {
-	return __scanfloat(nptr, endptr);
+	long double val = __scanfloat(nptr, endptr);
+
+	if (val > LDBL_MAX) {
+		errno = ERANGE;
+		return LDBL_MAX;
+	} else if (val < -LDBL_MAX) {
+		errno = ERANGE;
+		return -LDBL_MAX;
+	}
+
+	return val;
 }
