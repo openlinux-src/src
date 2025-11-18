@@ -1,17 +1,14 @@
 #ifndef __SIGNAL_H
 #define __SIGNAL_H
 
-#define __BITS_SIGNAL_H_
-#include <bits/signal.h>
-#undef __BITS_SIGNAL_H_
-
 #define __BITS_SIGEVENT_H_
 #include <bits/sigevent.h>
 #undef __BITS_SIGEVENT_H_
 
-#define SIG_DFL ((void (*)(int))0)
-#define SIG_ERR ((void (*)(int)) - 1)
-#define SIG_IGN ((void (*)(int))1)
+#define SIG_DFL	 ((void (*)(int))0)
+#define SIG_ERR	 ((void (*)(int)) - 1)
+#define SIG_IGN	 ((void (*)(int))1)
+#define SIG_HOLD ((void (*)(int))2)
 
 #define SIG_BLOCK   0
 #define SIG_UNBLOCK 1

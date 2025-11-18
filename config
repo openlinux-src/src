@@ -22,7 +22,7 @@ TAR := tar
 endif
 
 # Enabled libraries
-LIBS := libc libm libjson libuefi
+LIBS := libc libm libjson libuefi libcurses
 
 CCACHE := $(shell command -v ccache 2>/dev/null)
 HOSTCC := $(CCACHE) $(HOSTCC)

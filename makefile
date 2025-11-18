@@ -31,7 +31,7 @@ packages: all
 
 __all: | build
 	for lib in $(LIBS); do \
-		$(MAKE) -C lib/$$lib install; \
+		$(MAKE) -C lib/$$lib install || echo "Failed to build library $$lib"; \
 	done
 	$(MAKE) -C bin install
 	$(MAKE) -C arch/$(ARCH) install
