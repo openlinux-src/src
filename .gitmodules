@@ -1,3 +1,3 @@
 [submodule "sys"]
 	path = sys
-	url = git@github.com:openlinux-src/kernel.git
+	url = https://github.com/openlinux-src/kernel.git
