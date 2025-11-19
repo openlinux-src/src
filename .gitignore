@@ -20,3 +20,4 @@ tools/libc/*.txt
 compile_commands.json
 .cache
 dockerfile
+docs/html
