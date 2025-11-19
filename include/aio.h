@@ -9,9 +9,14 @@
 #include <bits/timespec.h>
 #undef __BITS_TIMESPEC_H_
 
-#define AIO_CANCELED	0
+/** A return value indicating that all requested operations have been canceled. */
+#define AIO_CANCELED 0
+
+/** A return value indicating that some of the requested operations could not be canceled since they are in progress. */
 #define AIO_NOTCANCELED 1
-#define AIO_ALLDONE	2
+
+/** A return value indicating that none of the requested operations could be canceled since they are already complete. */
+#define AIO_ALLDONE 2
 
 #define LIO_READ  0
 #define LIO_WRITE 1
