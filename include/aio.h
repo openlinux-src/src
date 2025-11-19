@@ -9,20 +9,48 @@
 #include <bits/timespec.h>
 #undef __BITS_TIMESPEC_H_
 
-/** A return value indicating that all requested operations have been canceled. */
+/** A return value indicating that all requested operations have been canceled.
+ */
 #define AIO_CANCELED 0
 
-/** A return value indicating that some of the requested operations could not be canceled since they are in progress. */
+/**
+ * A return value indicating that some of the requested operations
+ * could not be canceled since they are in progress.
+ */
 #define AIO_NOTCANCELED 1
 
-/** A return value indicating that none of the requested operations could be canceled since they are already complete. */
+/**
+ * A return value indicating that none of the requested operations
+ * could be canceled since they are already complete.
+ */
 #define AIO_ALLDONE 2
 
-#define LIO_READ  0
-#define LIO_WRITE 1
-#define LIO_NOP	  2
+/** A lio_listio() element operation option requesting a read. */
+#define LIO_READ 0
 
-#define LIO_WAIT   0
+/**
+ * A lio_listio() synchronization operation indicating that the calling
+ * thread is to suspend until the lio_listio() operation is complete.
+ */
+#define LIO_WRITE 1
+
+/**
+ * A lio_listio() element operation option indicating
+ * that no transfer is requested.
+ */
+#define LIO_NOP 2
+
+/**
+ * A lio_listio() synchronization operation indicating that the calling
+ * thread is to suspend until the lio_listio() operation is complete.
+ */
+#define LIO_WAIT 0
+
+/**
+ * A lio_listio() synchronization operation indicating that the calling thread
+ * is to continue execution while the lio_listio() operation is being performed,
+ * and no notification is given when the operation is complete.
+ */
 #define LIO_NOWAIT 1
 
 typedef __INT64_TYPE__ off_t;
@@ -30,13 +58,13 @@ typedef __SIZE_TYPE__ size_t;
 typedef __INT64_TYPE__ ssize_t;
 
 struct aiocb {
-	int aio_fildes;
-	off_t aio_offset;
-	volatile void *aio_buf;
-	size_t aio_nbytes;
-	int aio_reqprio;
-	struct sigevent aio_sigevent;
-	int aio_lio_opcode;
+  int aio_fildes;               /**< File descriptor. */
+  off_t aio_offset;             /**< File offset. */
+  volatile void *aio_buf;       /**< Location of buffer. */
+  size_t aio_nbytes;            /**< Length of transfer. */
+  int aio_reqprio;              /**< Request priority offset. */
+  struct sigevent aio_sigevent; /**< Signal number and value. */
+  int aio_lio_opcode;           /**< Operation to be performed. */
 };
 
 int aio_cancel(int, struct aiocb *);
@@ -47,6 +75,6 @@ ssize_t aio_return(struct aiocb *);
 int aio_suspend(const struct aiocb *const[], int, const struct timespec *);
 int aio_write(struct aiocb *);
 int lio_listio(int, struct aiocb *restrict const[restrict], int,
-	       struct sigevent *restrict);
+               struct sigevent *restrict);
 
 #endif
