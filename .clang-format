@@ -89,7 +89,6 @@ PenaltyReturnTypeOnItsOwnLine: 60
 
 PointerAlignment: Right
 ReflowComments: true
-WrapComments: true
 SortIncludes: false
 IndentExternBlock: AfterExternBlock
 SortUsingDeclarations: false
