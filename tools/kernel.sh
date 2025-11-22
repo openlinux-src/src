@@ -20,6 +20,8 @@ task() {
 	echo "RUN make olddefconfig"
 } > dockerfile
 
+mkdir -p build/$ARCH/EFI/BOOT
+
 task "BUILD" "Building kernel build environment..."
 docker buildx build -q --platform=linux/amd64 -t openlinux-image:latest --load . > /dev/null
 
@@ -27,6 +29,6 @@ task "RUN" "Starting kernel build environment..."
 docker run -q -it --rm --platform linux/amd64 \
     -v "$PWD/build/$ARCH:/build" \
     openlinux-image:latest \
-    /bin/sh -c "yes '' | make -j4 LLVM=1 ARCH=$ARCH bzImage; cp vmlinux /build/EFI/BOOT/BOOTX64.EFI"
+    /bin/sh -c "yes '' | make -j\$(nproc) LLVM=1 ARCH=$ARCH bzImage; cp arch/x86/boot/bzImage /build/EFI/BOOT/BOOTX64.EFI"
 
 rm -f dockerfile
