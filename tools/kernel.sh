@@ -27,6 +27,6 @@ task "RUN" "Starting kernel build environment..."
 docker run -q -it --rm --platform linux/amd64 \
     -v "$PWD/build/$ARCH:/build" \
     openlinux-image:latest \
-    /bin/sh -c "yes '' | make -j\$(nproc) LLVM=1 ARCH=$ARCH bzImage; cp vmlinux /build/EFI/BOOT/KERNEL.ELF"
+    /bin/sh -c "yes '' | make -j4 LLVM=1 ARCH=$ARCH bzImage; cp vmlinux /build/EFI/BOOT/BOOTX64.EFI"
 
 rm -f dockerfile
